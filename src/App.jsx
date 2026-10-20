@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare } from 'lucide-react';
+import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle } from 'lucide-react';
+import padelImg from './Padel.PNG';
+import futbolImg from './Futbol.PNG';
 
 export default function App() {
   // Pasos: 'phone' -> 'details' -> 'booking' -> 'success'
@@ -96,23 +98,19 @@ export default function App() {
     setStep('booking');
   };
 
-  // PASO 3: Confirmar reserva, bloquear turno y abrir WhatsApp hacia Les Courts
+  // PASO 3: Confirmar reserva, bloquear turno y abrir WhatsApp hacia Les Courts (+5493513988422)
   const handleFinalBooking = () => {
     if (!selectedTime) return;
 
     const slotKey = `${selectedSport}_${currentFullDate}_${selectedTime}`;
     setBookedSlots(prev => ({ ...prev, [slotKey]: true }));
 
-    // Generar mensaje oficial para Les Courts (+5493513988422)
     const dateLabel = availableDays[selectedDay].dateNum;
     const sportName = selectedSport === 'padel' ? 'Pádel Pro' : 'Fútbol 7';
-    const message = `¡Hola Les Courts! 🎾⚽ Vengo a confirmar mi reserva realizada correctamente.\n\n👤 *Cliente:* ${name}\n📱 *Teléfono:* ${phone}\n🏆 *Deporte:* ${sportName}\n📅 *Día:* ${dateLabel}\n⏰ *Horario:* ${selectedTime} hs\n\n¡Quedo a la espera de la confirmación final!`;
+    const message = `¡Hola Les Courts! 🎾⚽ Vengo a confirmar mi reserva.\n\n👤 *Cliente:* ${name}\n📱 *Teléfono:* ${phone}\n🏆 *Deporte:* ${sportName}\n📅 *Día:* ${dateLabel}\n⏰ *Horario:* ${selectedTime} hs\n\nQuedo atento para coordinar el envío de la seña y asegurar mi turno. ¡Gracias!`;
     const encodedMessage = encodeURIComponent(message);
     
-    // Número oficial de Les Courts
     const whatsappUrl = `https://wa.me/5493513988422?text=${encodedMessage}`;
-    
-    // Abrir WhatsApp en pestaña nueva
     window.open(whatsappUrl, '_blank');
 
     setStep('success');
@@ -140,7 +138,7 @@ export default function App() {
 
           <nav className="hidden md:flex items-center space-x-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-sm font-bold text-white">
             <a href="#inicio" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Fútbol & Pádel</a>
-            <a href="#servicios" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Servicios</a>
+            <a href="#servicios" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Canchas</a>
             <a href="#reservas" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Reservas</a>
           </nav>
 
@@ -167,14 +165,14 @@ export default function App() {
           </div>
 
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
-            EL FULBITO DE LA SEMANA SE JUEGA EN  <br />
+            EL PARTIDAZO DE LA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-               LES COURTS
+              SEMANA SE JUEGA EN LES COURTS
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-medium">
-            Viví la mejor experiencia deportiva con canchas de primer nivel, iluminación de calidad, seguridad y el mejor tercer tiempo.
+            Viví la mejor experiencia deportiva con canchas de primer nivel, iluminación LED profesional y el mejor tercer tiempo.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -188,7 +186,7 @@ export default function App() {
               href="#servicios"
               className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/15 px-8 py-4 rounded-2xl font-bold text-base transition text-center cursor-pointer"
             >
-              Ver servicios
+              Ver canchas
             </a>
           </div>
         </div>
@@ -196,54 +194,79 @@ export default function App() {
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-white rounded-t-[40px] md:rounded-t-[60px]" />
       </section>
 
-      {/* SECCIÓN SERVICIOS */}
+      {/* SECCIÓN DE CANCHAS CON FOTOS REALES */}
       <section id="servicios" className="bg-white py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="space-y-3 mb-12">
+          <div className="space-y-3 mb-12 text-center sm:text-left">
             <span className="text-emerald-600 font-extrabold tracking-wider uppercase text-xs">
-              SERVICIOS
+              INSTALACIONES
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
-              MÁS QUE UNA CANCHA
+              NUESTRAS CANCHAS REALES
             </h2>
+            <p className="text-slate-600 max-w-xl">
+              Conocé las instalaciones de Les Courts. Superficies de primer nivel listas para tu próximo partido.
+            </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 hover:shadow-xl transition duration-300 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
-                  <Trophy className="w-6 h-6" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            {/* TARJETA PÁDEL (FOTO REAL) */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
+              <div className="relative h-72 overflow-hidden bg-slate-950">
+                <img 
+                  src={padelImg} 
+                  alt="Cancha de Pádel Real Les Courts" 
+                  className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
+                />
+                <div className="absolute top-4 left-4 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md">
+                  Pádel Pro
                 </div>
-                <h3 className="text-xl font-black text-slate-900">Torneos y Eventos</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  Organizamos campeonatos relámpago de pádel y fútbol 7 con premios, fixture digital y la mejor competencia de la zona.
-                </p>
+              </div>
+              <div className="p-8 flex flex-col justify-between flex-grow space-y-4">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">Canchas de Pádel Les Courts</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    Estructura vidriada, iluminación nocturna óptima y el mejor ambiente competitivo de Córdoba.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase">Blindex & LED</span>
+                  <a href="#reservas" className="text-emerald-600 font-extrabold text-sm hover:underline flex items-center gap-1">
+                    Reservar Pádel →
+                  </a>
+                </div>
               </div>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 hover:shadow-xl transition duration-300 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
-                  <Coffee className="w-6 h-6" />
+            {/* TARJETA FÚTBOL 7 (FOTO REAL) */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
+              <div className="relative h-72 overflow-hidden bg-slate-950">
+                <img 
+                  src={futbolImg} 
+                  alt="Cancha de Fútbol 7 Real Les Courts" 
+                  className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
+                />
+                <div className="absolute top-4 left-4 bg-blue-600 text-white font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md">
+                  Fútbol 7
                 </div>
-                <h3 className="text-xl font-black text-slate-900">Bar y Tercer Tiempo</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  Disfrutá de bebidas ultra frías, picadas y buena música después de cada partido en nosso sector exclusivo para equipos.
-                </p>
+              </div>
+              <div className="p-8 flex flex-col justify-between flex-grow space-y-4">
+                <div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">Canchas de Fútbol 7 Les Courts</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed">
+                    Césped sintético impecable y dimensiones ideales para armar partidazos con amigos y vivir el tercer tiempo.
+                  </p>
+                </div>
+                <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
+                  <span className="text-xs font-bold text-slate-500 uppercase">Sintético Pro</span>
+                  <a href="#reservas" className="text-blue-600 font-extrabold text-sm hover:underline flex items-center gap-1">
+                    Reservar Fútbol →
+                  </a>
+                </div>
               </div>
             </div>
 
-            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 hover:shadow-xl transition duration-300 flex flex-col justify-between">
-              <div className="space-y-4">
-                <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
-                  <Shield className="w-6 h-6" />
-                </div>
-                <h3 className="text-xl font-black text-slate-900">Comodidades Pro</h3>
-                <p className="text-slate-600 text-sm leading-relaxed">
-                  Estacionamiento privado dentro del predio, vestuarios amplios con agua caliente individual y seguridad permanente.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </section>
@@ -430,9 +453,18 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* AVISO DE SEÑA */}
+                <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start gap-3 text-amber-300 text-xs leading-relaxed">
+                  <AlertCircle className="w-5 h-5 flex-shrink-0 text-amber-400 mt-0.5" />
+                  <div>
+                    <span className="font-bold uppercase tracking-wide block mb-0.5">Importante para asegurar tu turno:</span>
+                    Para completar y asegurar tu reserva definitivamente, al enviar el mensaje de WhatsApp se te solicitará el pago de una seña previa para no perder el turno.
+                  </div>
+                </div>
+
                 {/* BOTÓN FINAL */}
                 {selectedTime && (
-                  <div className="pt-4 border-t border-slate-800 animate-fade-in">
+                  <div className="pt-2 animate-fade-in">
                     <button
                       type="button"
                       onClick={handleFinalBooking}
@@ -454,7 +486,7 @@ export default function App() {
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-white">¡Turno Reservado con Éxito!</h3>
                   <p className="text-slate-400 text-sm max-w-md mx-auto">
-                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp para enviarle la confirmación al complejo (<span className="text-emerald-400 font-bold">+54 9 351 398-8422</span>) para tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. ¡El turno ya figura como ocupado!
+                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp para enviar la confirmación a Les Courts (<span className="text-emerald-400 font-bold">+54 9 351 398-8422</span>) para tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. ¡Recordá coordinar la seña para asegurar tu lugar!
                   </p>
                 </div>
                 <button
@@ -478,9 +510,7 @@ export default function App() {
             <div className="bg-emerald-400 p-1.5 rounded-lg text-slate-950 font-black text-xs">LC</div>
             <span className="font-bold text-white text-base">LES COURTS</span>
           </div>
-          <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.
-            Desarollado por Mateo Diaz
-          </p>
+          <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.</p>
           <div className="flex items-center space-x-4">
             <a 
               href="https://www.instagram.com/lescourts" 
