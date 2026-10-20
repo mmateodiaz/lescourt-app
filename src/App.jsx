@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle } from 'lucide-react';
+import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle, MapPin, Wrench } from 'lucide-react';
 
 export default function App() {
   const [step, setStep] = useState('phone');
@@ -124,8 +124,10 @@ export default function App() {
           </div>
 
           <nav className="hidden md:flex items-center space-x-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 text-sm font-bold text-white">
-            <a href="#inicio" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Fútbol & Pádel</a>
+            <a href="#inicio" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Inicio</a>
+            <a href="#sedes" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Sedes</a>
             <a href="#servicios" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Canchas</a>
+            <a href="#construccion" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Construcción</a>
             <a href="#reservas" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Reservas</a>
           </nav>
 
@@ -170,10 +172,10 @@ export default function App() {
               Reservar cancha <ArrowRight className="w-5 h-5" />
             </a>
             <a
-              href="#servicios"
+              href="#sedes"
               className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white backdrop-blur-md border border-white/15 px-8 py-4 rounded-2xl font-bold text-base transition text-center cursor-pointer"
             >
-              Ver canchas
+              Conocer sedes
             </a>
           </div>
         </div>
@@ -181,26 +183,85 @@ export default function App() {
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-white rounded-t-[40px] md:rounded-t-[60px]" />
       </section>
 
-      {/* SECCIÓN DE CANCHAS */}
-      <section id="servicios" className="bg-white py-16 text-slate-900 relative z-20">
+      {/* SECCIÓN NUESTRAS SEDES */}
+      <section id="sedes" className="bg-white py-16 text-slate-900 relative z-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="space-y-3 mb-12 text-center sm:text-left">
+            <span className="text-emerald-600 font-extrabold tracking-wider uppercase text-xs">
+              UBICACIONES
+            </span>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
+              NUESTRAS SEDES EN CÓRDOBA
+            </h2>
+            <p className="text-slate-600 max-w-xl">
+              Elegí la sede que te quede más cómoda y vení a disfrutar del mejor deporte.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            
+            {/* SEDE VILLA BELGRANO */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 shadow-lg hover:shadow-xl transition duration-300 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 bg-emerald-100 text-emerald-800 px-3.5 py-1.5 rounded-full font-extrabold text-xs">
+                  <MapPin className="w-4 h-4" /> Sede Principal
+                </div>
+                <h3 className="text-2xl font-black text-slate-900">Villa Belgrano</h3>
+                <p className="text-slate-600 font-bold text-sm">Av. Laplace 550, Córdoba</p>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  Cuenta con <strong className="text-slate-900">4 canchas de pádel rápidas de blindex o muro</strong>, excelente iluminación y estacionamiento exclusivo.
+                </p>
+              </div>
+              <div className="pt-6 mt-6 border-t border-slate-200">
+                <a href="#reservas" className="text-emerald-600 font-black text-sm hover:underline flex items-center gap-1">
+                  Reservar en Villa Belgrano →
+                </a>
+              </div>
+            </div>
+
+            {/* SEDE RIVERA INDARTE */}
+            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 shadow-lg hover:shadow-xl transition duration-300 flex flex-col justify-between">
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3.5 py-1.5 rounded-full font-extrabold text-xs">
+                  <MapPin className="w-4 h-4" /> Sede Norte
+                </div>
+                <h3 className="text-2xl font-black text-slate-900">Rivera Indarte</h3>
+                <p className="text-slate-600 font-bold text-sm">Av. Boderau 7700, Córdoba</p>
+                <p className="text-slate-600 text-sm leading-relaxed">
+                  Cuenta con <strong className="text-slate-900">4 canchas de pádel rápidas de blindex</strong> de última generación, bar y comodidad total.
+                </p>
+              </div>
+              <div className="pt-6 mt-6 border-t border-slate-200">
+                <a href="#reservas" className="text-blue-600 font-black text-sm hover:underline flex items-center gap-1">
+                  Reservar en Rivera Indarte →
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* SECCIÓN CANCHAS */}
+      <section id="servicios" className="bg-slate-100 py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-3 mb-12 text-center sm:text-left">
             <span className="text-emerald-600 font-extrabold tracking-wider uppercase text-xs">
               INSTALACIONES
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
-              NUESTRAS CANCHAS REALES
+              NUESTRAS CANCHAS
             </h2>
             <p className="text-slate-600 max-w-xl">
-              Conocé las instalaciones de Les Courts. Superficies de primer nivel listas para tu próximo partido.
+              Superficies de primer nivel listas para tu próximo partido.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
             {/* TARJETA PÁDEL */}
-            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
-              <div className="relative h-80 overflow-hidden bg-slate-950 flex items-center justify-center">
+            <div className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
+              <div className="relative h-72 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
                   src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&q=80&w=1000" 
                   alt="Cancha de Pádel Real Les Courts" 
@@ -214,11 +275,11 @@ export default function App() {
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 mb-2">Canchas de Pádel Les Courts</h3>
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    Estructura vidriada, iluminación nocturna óptima y el mejor ambiente competitivo de Córdoba.
+                    Estructura vidriada, iluminación nocturna óptima y el mejor ambiente competitivo de Córdoba en ambas sedes.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase">Blindex & LED</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase">Blindex o Muro</span>
                   <a href="#reservas" className="text-emerald-600 font-extrabold text-sm hover:underline flex items-center gap-1">
                     Reservar Pádel →
                   </a>
@@ -227,8 +288,8 @@ export default function App() {
             </div>
 
             {/* TARJETA FÚTBOL 7 */}
-            <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
-              <div className="relative h-80 overflow-hidden bg-slate-950 flex items-center justify-center">
+            <div className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
+              <div className="relative h-72 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
                   src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1000" 
                   alt="Cancha de Fútbol 7 Real Les Courts" 
@@ -254,6 +315,57 @@ export default function App() {
               </div>
             </div>
 
+          </div>
+        </div>
+      </section>
+
+      {/* SECCIÓN SERVICIO DE CONSTRUCCIÓN */}
+      <section id="construccion" className="bg-slate-950 py-20 text-white relative border-t border-slate-800">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div className="space-y-6">
+              <span className="text-emerald-400 font-extrabold tracking-wider uppercase text-xs bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Unidad de Ingeniería y Obra
+              </span>
+              <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
+                Servicio de Construcción de Canchas Profesionales
+              </h2>
+              <p className="text-slate-300 text-base leading-relaxed">
+                Llevamos toda nuestra experiencia en complejos deportivos directamente a tu proyecto. Ofrecemos diseño, ejecución y construcción integral llave en mano para superficies de alta competencia:
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+                <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-center space-y-2">
+                  <span className="text-2xl">🎾</span>
+                  <h4 className="font-black text-white text-sm">Canchas de Tenis</h4>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-center space-y-2">
+                  <span className="text-2xl">⚡</span>
+                  <h4 className="font-black text-white text-sm">Canchas de Pádel</h4>
+                </div>
+                <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-center space-y-2">
+                  <span className="text-2xl">⚽</span>
+                  <h4 className="font-black text-white text-sm">Canchas de Fútbol</h4>
+                </div>
+              </div>
+              <div className="pt-4">
+                <a
+                  href="https://wa.me/5493513988422?text=¡Hola%20Les%20Courts!%20Me%20interesa%20consultar%20sobre%20el%20servicio%20de%20construcción%20de%20canchas."
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 bg-emerald-400 hover:bg-emerald-300 text-slate-950 px-8 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 cursor-pointer"
+                >
+                  <Wrench className="w-5 h-5" /> Consultar por construcción de canchas
+                </a>
+              </div>
+            </div>
+            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-800 h-96">
+              <img 
+                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1000" 
+                alt="Construcción de canchas" 
+                className="w-full h-full object-cover opacity-80"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
+            </div>
           </div>
         </div>
       </section>
