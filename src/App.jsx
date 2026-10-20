@@ -1,19 +1,44 @@
 import React, { useState } from 'react';
-import { ArrowRight, Trophy, Shield, Coffee, Zap } from 'lucide-react';
+import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2 } from 'lucide-react';
 
 export default function App() {
   const [selectedSport, setSelectedSport] = useState('padel');
-  const [selectedDate, setSelectedDate] = useState('2026-10-25');
+  const [selectedDay, setSelectedDay] = useState(0); // 0 = Hoy, 1 = Mañana, etc.
   const [selectedTime, setSelectedTime] = useState(null);
   const [formData, setFormData] = useState({ name: '', phone: '' });
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
 
-  const hours = [
-    { time: '17:00', available: true, price: '$18.000' },
-    { time: '18:30', available: false, price: '$20.000' },
-    { time: '20:00', available: true, price: '$22.000' },
-    { time: '21:30', available: true, price: '$22.000' },
-    { time: '23:00', available: true, price: '$19.000' },
+  // Generar próximos 5 días dinámicamente
+  const getNextDays = () => {
+    const days = [];
+    const options = { weekday: 'short', day: 'numeric', month: 'short' };
+    for (let i = 0; i < 5; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() + i);
+      days.push({
+        index: i,
+        label: i === 0 ? 'Hoy' : i === 1 ? 'Mañana' : d.toLocaleDateString('es-AR', { weekday: 'short' }),
+        dateNum: d.toLocaleDateString('es-AR', { day: 'numeric', month: 'short' }),
+        fullDate: d.toISOString().split('T')[0]
+      });
+    }
+    return days;
+  };
+
+  const availableDays = getNextDays();
+
+  // Horarios disponibles según el deporte
+  const hours = selectedSport === 'padel' ? [
+    { time: '17:00', available: true, price: '$18.000', tag: 'Popular' },
+    { time: '18:30', available: false, price: '$20.000', tag: 'Ocupado' },
+    { time: '20:00', available: true, price: '$22.000', tag: '¡Estelar!' },
+    { time: '21:30', available: true, price: '$22.000', tag: 'Último' },
+    { time: '23:00', available: true, price: '$19.000', tag: 'Promo' },
+  ] : [
+    { time: '18:00', available: true, price: '$35.000', tag: 'Popular' },
+    { time: '19:30', available: true, price: '$40.000', tag: '¡Estelar!' },
+    { time: '21:00', available: false, price: '$40.000', tag: 'Ocupado' },
+    { time: '22:30', available: true, price: '$38.000', tag: 'Promo' },
   ];
 
   const handleBookingSubmit = (e) => {
@@ -63,9 +88,9 @@ export default function App() {
           </div>
 
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
-            EL FULBITO DE LA  SEMANA SE JUEGA EN<br />
+            EL PARTIDAZO DE LA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-              LES COURTS
+              SEMANA SE JUEGA EN LES COURTS
             </span>
           </h1>
 
@@ -136,7 +161,7 @@ export default function App() {
                 </div>
                 <h3 className="text-xl font-black text-slate-900">Comodidades Pro</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Estacionamiento privado dentro del predio, baños y seguridad permanente.
+                  Estacionamiento privado dentro del predio, vestuarios amplios con agua caliente individual y seguridad permanente.
                 </p>
               </div>
             </div>
@@ -144,20 +169,21 @@ export default function App() {
         </div>
       </section>
 
-      {/* MOTOR DE RESERVAS */}
+      {/* MOTOR DE RESERVAS INTERACTIVO */}
       <section id="reservas" className="bg-slate-900 py-24 text-white relative">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-12">
             <span className="text-emerald-400 font-extrabold tracking-wider uppercase text-xs bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-              Sistema Online
+              Sistema Online 24/7
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">Reservá Tu Cancha</h2>
-            <p className="text-slate-400">Elegí el deporte, la fecha y el horario en segundos.</p>
+            <p className="text-slate-400">Elegí el deporte, el día en el calendario y el horario ideal.</p>
           </div>
 
           <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl">
             {!bookingConfirmed ? (
               <div className="space-y-8">
+                {/* 1. SELECCIÓN DE DEPORTE */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">1. Seleccioná la Disciplina</label>
                   <div className="grid grid-cols-2 gap-4">
@@ -166,18 +192,18 @@ export default function App() {
                       onClick={() => { setSelectedSport('padel'); setSelectedTime(null); }}
                       className={`py-4 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
                         selectedSport === 'padel'
-                          ? 'bg-emerald-400 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-400/20'
+                          ? 'bg-emerald-400 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-400/20 scale-[1.02]'
                           : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
                       }`}
                     >
-                      🎾 Pádel 
+                      🎾 Pádel Pro
                     </button>
                     <button
                       type="button"
                       onClick={() => { setSelectedSport('futbol'); setSelectedTime(null); }}
                       className={`py-4 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
                         selectedSport === 'futbol'
-                          ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20'
+                          ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20 scale-[1.02]'
                           : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
                       }`}
                     >
@@ -186,42 +212,67 @@ export default function App() {
                   </div>
                 </div>
 
+                {/* 2. CALENDARIO INTERACTIVO (DÍAS) */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">2. Seleccioná la Fecha</label>
-                  <input
-                    type="date"
-                    value={selectedDate}
-                    onChange={(e) => setSelectedDate(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-4 py-4 text-white font-bold focus:outline-none focus:border-emerald-400"
-                  />
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-emerald-400" /> 2. Seleccioná el Día del Partido
+                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+                    {availableDays.map((day) => (
+                      <button
+                        key={day.index}
+                        type="button"
+                        onClick={() => { setSelectedDay(day.index); setSelectedTime(null); }}
+                        className={`p-3.5 rounded-2xl border text-center transition flex flex-col items-center justify-center cursor-pointer ${
+                          selectedDay === day.index
+                            ? 'bg-emerald-400 text-slate-950 border-emerald-400 font-black shadow-lg shadow-emerald-400/20 scale-105'
+                            : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
+                        }`}
+                      >
+                        <span className="text-xs uppercase font-extrabold opacity-80">{day.label}</span>
+                        <span className="text-sm font-black mt-0.5">{day.dateNum}</span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
 
+                {/* 3. SELECCIÓN DE HORARIOS DISPONIBLES */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">3. Seleccioná el Horario</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-emerald-400" /> 3. Seleccioná el Horario Disponible
+                  </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {hours.map((h, idx) => (
                       <button
                         key={idx}
                         disabled={!h.available}
                         onClick={() => setSelectedTime(h.time)}
-                        className={`p-4 rounded-2xl border text-center transition flex flex-col items-center justify-center ${
+                        className={`p-4 rounded-2xl border text-center transition flex flex-col items-center justify-center relative overflow-hidden ${
                           !h.available
                             ? 'bg-slate-900/30 border-slate-900 text-slate-600 cursor-not-allowed opacity-40'
                             : selectedTime === h.time
-                            ? 'bg-emerald-400 text-slate-950 border-emerald-400 font-black shadow-lg shadow-emerald-400/20'
-                            : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-slate-700 cursor-pointer'
+                            ? 'bg-emerald-400 text-slate-950 border-emerald-400 font-black shadow-lg shadow-emerald-400/20 scale-[1.02]'
+                            : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-emerald-500/50 cursor-pointer'
                         }`}
                       >
-                        <span className="text-base font-black">{h.time}</span>
-                        <span className="text-xs opacity-80 mt-1">{h.available ? h.price : 'Ocupado'}</span>
+                        <span className="text-lg font-black">{h.time}</span>
+                        <span className="text-xs opacity-90 mt-1 font-bold">{h.available ? h.price : 'Ocupado'}</span>
+                        {h.available && (
+                          <span className="absolute top-1 right-2 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                            {h.tag}
+                          </span>
+                        )}
                       </button>
                     ))}
                   </div>
                 </div>
 
+                {/* FORMULARIO DE DATOS FINALES */}
                 {selectedTime && (
-                  <form onSubmit={handleBookingSubmit} className="pt-6 border-t border-slate-800 space-y-4">
-                    <h3 className="text-lg font-black text-white">Completá tus datos para confirmar</h3>
+                  <form onSubmit={handleBookingSubmit} className="pt-6 border-t border-slate-800 space-y-4 animate-fade-in">
+                    <h3 className="text-lg font-black text-white flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5 text-emerald-400" /> ¡Completá tus datos para asegurar el turno!
+                    </h3>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <input
                         type="text"
@@ -244,25 +295,26 @@ export default function App() {
                       type="submit"
                       className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      Confirmar Reserva 🚀
+                      Confirmar Reserva de Cancha 🚀
                     </button>
                   </form>
                 )}
               </div>
             ) : (
               <div className="text-center py-12 space-y-6">
-                <div className="w-20 h-20 bg-emerald-400/20 border border-emerald-400 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-3xl font-black">
+                <div className="w-20 h-20 bg-emerald-400/20 border border-emerald-400 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-3xl font-black animate-bounce">
                   ✓
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-white">¡Reserva Solicitada con Éxito!</h3>
+                  <h3 className="text-2xl font-black text-white">¡Turno Solicitado con Éxito!</h3>
                   <p className="text-slate-400 text-sm max-w-md mx-auto">
-                    Gracias <span className="text-white font-bold">{formData.name}</span>. Apartamos tu cancha para el día <span className="text-white">{selectedDate}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>.
+                    Impecable <span className="text-white font-bold">{formData.name}</span>. Apartamos tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> para el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>.
                   </p>
                 </div>
                 <button
+                  type="button"
                   onClick={() => { setBookingConfirmed(false); setSelectedTime(null); setFormData({ name: '', phone: '' }); }}
-                  className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition cursor-pointer"
+                  className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition cursor-pointer border border-slate-700"
                 >
                   Hacer otra reserva
                 </button>
@@ -276,7 +328,7 @@ export default function App() {
       <footer className="bg-slate-950 border-t border-slate-900 py-12 text-slate-400 text-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-2">
-            <div className="bg-emerald-400 p-1 rounded text-slate-950 font-black text-xs">LC</div>
+            <div className="bg-emerald-400 p-1.5 rounded-lg text-slate-950 font-black text-xs">LC</div>
             <span className="font-bold text-white text-base">LES COURTS</span>
           </div>
           <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.</p>
