@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle, MapPin } from 'lucide-react';
+import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle, MapPin, Zap } from 'lucide-react';
 
 export default function App() {
   const [step, setStep] = useState('phone');
@@ -8,12 +8,12 @@ export default function App() {
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [selectedSede, setSelectedSede] = useState('belgrano'); // 'belgrano' o 'rivera'
-  const [selectedSport, setSelectedSport] = useState('padel'); // 'tenis', 'padel', 'squash', 'futbol'
+  const [selectedSport, setSelectedSport] = useState('padel'); 
   const [selectedDay, setSelectedDay] = useState(0);
   const [selectedTime, setSelectedTime] = useState(null);
   const [isReturningUser, setIsReturningUser] = useState(false);
 
-  // Base de datos de turnos ocupados por sede/deporte/día/hora (guardada en localStorage)
+  // Base de datos de turnos ocupados
   const [bookedSlots, setBookedSlots] = useState(() => {
     const saved = localStorage.getItem('lescourts_booked_slots');
     return saved ? JSON.parse(saved) : {};
@@ -39,7 +39,6 @@ export default function App() {
     }
   };
 
-  // Si cambia la sede, asegurarnos de que el deporte seleccionado sea válido para esa sede
   const handleSedeChange = (sedeId) => {
     setSelectedSede(sedeId);
     setSelectedTime(null);
@@ -66,40 +65,56 @@ export default function App() {
 
   const availableDays = getNextDays();
 
-  // Horarios y precios según el deporte
-  const getHoursForSport = (sport) => {
-    if (sport === 'futbol') {
+  // Generar horarios y precios según Sede y Deporte
+  const getHoursForSelection = (sede, sport) => {
+    if (sede === 'rivera' && sport === 'futbol') {
       return [
-        { time: '18:00', price: '$35.000', tag: 'Popular' },
-        { time: '19:30', price: '$40.000', tag: '¡Estelar!' },
-        { time: '21:00', price: '$40.000', tag: 'Libre' },
-        { time: '22:30', price: '$38.000', tag: 'Promo' },
+        { time: '10:00', price: '$95.000', tag: 'Diurno', rawPrice: 95000 },
+        { time: '12:00', price: '$95.000', tag: 'Diurno', rawPrice: 95000 },
+        { time: '15:00', price: '$95.000', tag: 'Diurno', rawPrice: 95000 },
+        { time: '18:00', price: '$95.000', tag: 'Diurno', rawPrice: 95000 },
+        { time: '20:00', price: '$105.000 (Efectivo $98.000)', tag: 'Promo Estelar', rawPrice: 105000 },
+        { time: '21:00', price: '$105.000 (Efectivo $98.000)', tag: 'Promo Estelar', rawPrice: 105000 },
+        { time: '22:00', price: '$105.000 (Efectivo $98.000)', tag: 'Promo Estelar', rawPrice: 105000 },
+        { time: '23:00', price: '$95.000', tag: 'Nocturno', rawPrice: 95000 },
       ];
-    } else if (sport === 'tenis') {
+    } else if (sede === 'rivera' && sport === 'padel') {
       return [
-        { time: '17:00', price: '$15.000', tag: 'Popular' },
-        { time: '18:30', price: '$18.000', tag: 'Libre' },
-        { time: '20:00', price: '$20.000', tag: '¡Estelar!' },
-      ];
-    } else if (sport === 'squash') {
-      return [
-        { time: '17:30', price: '$12.000', tag: 'Popular' },
-        { time: '19:00', price: '$14.000', tag: 'Libre' },
-        { time: '20:30', price: '$16.000', tag: '¡Estelar!' },
+        { time: '10:00', price: '$24.000', tag: 'Sin Luz', rawPrice: 24000 },
+        { time: '12:00', price: '$24.000', tag: 'Sin Luz', rawPrice: 24000 },
+        { time: '15:00', price: '$24.000', tag: 'Sin Luz', rawPrice: 24000 },
+        { time: '18:00', price: '$28.000', tag: 'Con Luz', rawPrice: 28000 },
+        { time: '19:30', price: '$28.000', tag: 'Con Luz', rawPrice: 28000 },
+        { time: '21:00', price: '$28.000', tag: 'Con Luz', rawPrice: 28000 },
+        { time: '22:30', price: '$28.000', tag: 'Con Luz', rawPrice: 28000 },
       ];
     } else {
-      // Pádel
-      return [
-        { time: '17:00', price: '$18.000', tag: 'Popular' },
-        { time: '18:30', price: '$20.000', tag: 'Libre' },
-        { time: '20:00', price: '$22.000', tag: '¡Estelar!' },
-        { time: '21:30', price: '$22.000', tag: 'Último' },
-        { time: '23:00', price: '$19.000', tag: 'Promo' },
-      ];
+      // Villa Belgrano o deportes generales por defecto
+      if (sport === 'tenis') {
+        return [
+          { time: '17:00', price: '$15.000', tag: 'Popular' },
+          { time: '18:30', price: '$18.000', tag: 'Libre' },
+          { time: '20:00', price: '$20.000', tag: '¡Estelar!' },
+        ];
+      } else if (sport === 'squash') {
+        return [
+          { time: '17:30', price: '$12.000', tag: 'Popular' },
+          { time: '19:00', price: '$14.000', tag: 'Libre' },
+          { time: '20:30', price: '$16.000', tag: '¡Estelar!' },
+        ];
+      } else {
+        return [
+          { time: '17:00', price: '$18.000', tag: 'Popular' },
+          { time: '18:30', price: '$20.000', tag: 'Libre' },
+          { time: '20:00', price: '$22.000', tag: '¡Estelar!' },
+          { time: '21:30', price: '$22.000', tag: 'Último' },
+          { time: '23:00', price: '$19.000', tag: 'Promo' },
+        ];
+      }
     }
   };
 
-  const baseHours = getHoursForSport(selectedSport);
+  const baseHours = getHoursForSelection(selectedSede, selectedSport);
   const currentFullDate = availableDays[selectedDay].fullDate;
   
   const hours = baseHours.map(h => {
@@ -328,7 +343,7 @@ export default function App() {
                 <div>
                   <h3 className="text-2xl font-black text-white mb-2">Pádel (Ambas Sedes)</h3>
                   <p className="text-slate-300 text-sm leading-relaxed">
-                    Disponibles en Villa Belgrano (blindex o muro) y Rivera Indarte (blindex). Iluminación LED y máxima comodidad.
+                    Disponibles en Villa Belgrano y Rivera Indarte. En Rivera: Sin luz $24.000 / Con luz $28.000 la hora.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-[#2e4f22] flex items-center justify-between">
@@ -356,7 +371,7 @@ export default function App() {
                 <div>
                   <h3 className="text-2xl font-black text-white mb-2">Fútbol 7, Tenis y Squash</h3>
                   <p className="text-slate-300 text-sm leading-relaxed">
-                    Fútbol 7 con césped sintético de alta gama en Rivera Indarte. Tenis y Squash en Villa Belgrano.
+                    Fútbol 7 en Rivera Indarte: de 10 a 19hs y a las 23hs a $95.000. Horarios estelares (20, 21 y 22hs) a $105.000 (Promo efectivo $98.000).
                   </p>
                 </div>
                 <div className="pt-4 border-t border-[#2e4f22] flex items-center justify-between">
@@ -553,25 +568,27 @@ export default function App() {
                 {/* 4. SELECCIÓN DE HORARIO */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-3 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-[#8cc63f]" /> 4. Horarios Disponibles
+                    <Clock className="w-4 h-4 text-[#8cc63f]" /> 4. Horarios y Tarifas
                   </label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {hours.map((h, idx) => (
                       <button
                         key={idx}
                         disabled={!h.available}
                         onClick={() => setSelectedTime(h.time)}
-                        className={`p-3.5 rounded-2xl border text-center transition flex flex-col items-center justify-center relative overflow-hidden ${
+                        className={`p-3.5 rounded-2xl border text-left transition flex items-center justify-between relative overflow-hidden ${
                           !h.available
                             ? 'bg-[#0b1407] border-[#1a2e14] text-slate-600 cursor-not-allowed opacity-50'
                             : selectedTime === h.time
-                            ? 'bg-[#8cc63f] text-slate-950 border-[#8cc63f] font-black shadow-lg shadow-[#8cc63f]/20 scale-[1.02]'
-                            : 'bg-[#101e0b] border-[#2e4f22] text-slate-300 hover:border-[#8cc63f]/50 cursor-pointer'
+                            ? 'bg-[#8cc63f] text-slate-950 border-[#8cc63f] font-black shadow-lg shadow-[#8cc63f]/25 scale-[1.01]'
+                            : 'bg-[#101e0b] border-[#2e4f22] text-slate-200 hover:border-[#8cc63f]/50 cursor-pointer'
                         }`}
                       >
-                        <span className="text-base font-black">{h.time}</span>
-                        <span className="text-xs opacity-90 mt-0.5 font-bold">{h.available ? h.price : 'Ocupado'}</span>
-                        <span className={`absolute top-1 right-2 text-[8px] font-extrabold uppercase px-1 py-0.5 rounded ${h.available ? 'bg-[#8cc63f]/20 text-[#b4ea57]' : 'bg-red-500/20 text-red-400'}`}>
+                        <div className="flex items-center gap-3">
+                          <span className="text-lg font-black">{h.time}</span>
+                          <span className="text-xs opacity-90 font-bold">{h.available ? h.price : 'Ocupado'}</span>
+                        </div>
+                        <span className={`text-[9px] font-extrabold uppercase px-2 py-1 rounded ${h.available ? 'bg-[#8cc63f]/20 text-[#b4ea57]' : 'bg-red-500/20 text-red-400'}`}>
                           {h.tag}
                         </span>
                       </button>
