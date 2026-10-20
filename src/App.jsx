@@ -223,9 +223,9 @@ export default function App() {
           </div>
 
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
-            EL PARTIDAZO DE LA <br />
+            EL FULBITO DE LA SEMANA SE JUEGA EN <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#9bc947] to-[#c7f56e]">
-              SEMANA SE JUEGA EN LES COURTS
+               LES COURTS
             </span>
           </h1>
 
@@ -337,7 +337,7 @@ export default function App() {
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500 opacity-90"
                 />
                 <div className="absolute top-4 left-4 bg-[#8cc63f] text-slate-950 font-black text-xs uppercase px-3.5 py-1.5 rounded-full shadow-md z-10">
-                  Pádel Pro
+                  Pádel 
                 </div>
               </div>
               <div className="p-8 flex flex-col justify-between flex-grow space-y-4">
@@ -654,7 +654,9 @@ export default function App() {
             <div className="bg-[#8cc63f] p-1.5 rounded-lg text-slate-950 font-black text-xs">LC</div>
             <span className="font-bold text-white text-base">LES COURTS</span>
           </div>
-          <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.
+            Desarollado por Mateo Diaz
+          </p>
           <div className="flex items-center space-x-4">
             <a 
               href="https://www.instagram.com/lescourts" 
