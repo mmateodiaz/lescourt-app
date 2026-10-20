@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import { CheckCircle2, ArrowRight, Instagram } from 'lucide-react';
+import { CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function App() {
   const [selectedSport, setSelectedSport] = useState('padel');
@@ -209,8 +209,8 @@ export default function App() {
           </div>
           <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.</p>
           <div className="flex items-center space-x-4">
-            <a href="https://www.instagram.com/lescourts" target="_blank" rel="noreferrer" className="bg-slate-900 p-2.5 rounded-xl hover:text-lime-400 transition border border-slate-800">
-              <Instagram className="w-5 h-5" />
+            <a href="https://www.instagram.com/lescourts" target="_blank" rel="noreferrer" className="bg-slate-900 px-4 py-2 rounded-xl hover:text-lime-400 transition border border-slate-800 text-white font-bold text-xs uppercase">
+              Instagram
             </a>
           </div>
         </div>
