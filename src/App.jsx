@@ -1,17 +1,20 @@
 import React, { useState } from 'react';
-import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft } from 'lucide-react';
 
 export default function App() {
+  // Pasos del flujo: 'phone' -> 'details' -> 'booking' -> 'success'
+  const [step, setStep] = useState('phone');
+  
+  // Datos del cliente y reserva
+  const [phone, setPhone] = useState('');
+  const [name, setName] = useState('');
   const [selectedSport, setSelectedSport] = useState('padel');
-  const [selectedDay, setSelectedDay] = useState(0); // 0 = Hoy, 1 = Mañana, etc.
+  const [selectedDay, setSelectedDay] = useState(0);
   const [selectedTime, setSelectedTime] = useState(null);
-  const [formData, setFormData] = useState({ name: '', phone: '' });
-  const [bookingConfirmed, setBookingConfirmed] = useState(false);
 
   // Generar próximos 5 días dinámicamente
   const getNextDays = () => {
     const days = [];
-    const options = { weekday: 'short', day: 'numeric', month: 'short' };
     for (let i = 0; i < 5; i++) {
       const d = new Date();
       d.setDate(d.getDate() + i);
@@ -41,10 +44,28 @@ export default function App() {
     { time: '22:30', available: true, price: '$38.000', tag: 'Promo' },
   ];
 
-  const handleBookingSubmit = (e) => {
+  const handlePhoneSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.phone || !selectedTime) return;
-    setBookingConfirmed(true);
+    if (!phone || phone.length < 6) return;
+    setStep('details');
+  };
+
+  const handleDetailsSubmit = (e) => {
+    e.preventDefault();
+    if (!name.trim()) return;
+    setStep('booking');
+  };
+
+  const handleFinalBooking = () => {
+    if (!selectedTime) return;
+    setStep('success');
+  };
+
+  const resetBooking = () => {
+    setStep('phone');
+    setPhone('');
+    setName('');
+    setSelectedTime(null);
   };
 
   return (
@@ -169,30 +190,88 @@ export default function App() {
         </div>
       </section>
 
-      {/* MOTOR DE RESERVAS INTERACTIVO */}
+      {/* MOTOR DE RESERVAS SECUENCIAL (PASO A PASO) */}
       <section id="reservas" className="bg-slate-900 py-24 text-white relative">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-12">
             <span className="text-emerald-400 font-extrabold tracking-wider uppercase text-xs bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
               Sistema Online 24/7
             </span>
-            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">Reservá Tu Cancha</h2>
-            <p className="text-slate-400">Elegí el deporte, el día en el calendario y el horario ideal.</p>
+            <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">Gestión de Turnos</h2>
+            <p className="text-slate-400">Completá tus datos para acceder a la disponibilidad de canchas.</p>
           </div>
 
-          <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl">
-            {!bookingConfirmed ? (
-              <div className="space-y-8">
-                {/* 1. SELECCIÓN DE DEPORTE */}
-                <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">1. Seleccioná la Disciplina</label>
+          <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
+            
+            {/* PASO 1: NÚMERO DE TELÉFONO */}
+            {step === 'phone' && (
+              <form onSubmit={handlePhoneSubmit} className="space-y-6 animate-fade-in">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                  <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">Paso 1 de 3</span>
+                  <span className="text-xs text-slate-500 font-bold">Identificación</span>
+                </div>
+                <div className="space-y-2">
+                  <label className="block text-sm font-bold text-slate-300 flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-emerald-400" /> Ingresá tu número de Teléfono / WhatsApp
+                  </label>
+                  <p className="text-xs text-slate-400">Lo utilizaremos para enviarte la confirmación y recordatorio de tu turno.</p>
+                </div>
+                <input
+                  type="tel"
+                  placeholder="Ej: 3512345678"
+                  required
+                  autoFocus
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold text-lg focus:outline-none focus:border-emerald-400 transition"
+                />
+                <button
+                  type="submit"
+                  className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  Continuar <ArrowRight className="w-5 h-5" />
+                </button>
+              </form>
+            )}
+
+            {/* PASO 2: DATOS PERSONALES Y DEPORTE */}
+            {step === 'details' && (
+              <form onSubmit={handleDetailsSubmit} className="space-y-6 animate-fade-in">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                  <button 
+                    type="button" 
+                    onClick={() => setStep('phone')} 
+                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> Volver
+                  </button>
+                  <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">Paso 2 de 3</span>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="block text-sm font-bold text-slate-300 flex items-center gap-2">
+                    <User className="w-4 h-4 text-emerald-400" /> Nombre y Apellido
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ej: Carlos Tevez"
+                    required
+                    autoFocus
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-2xl px-5 py-4 text-white font-bold text-base focus:outline-none focus:border-emerald-400 transition"
+                  />
+                </div>
+
+                <div className="space-y-2 pt-2">
+                  <label className="block text-sm font-bold text-slate-300">Seleccioná la Disciplina</label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
-                      onClick={() => { setSelectedSport('padel'); setSelectedTime(null); }}
-                      className={`py-4 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
+                      onClick={() => setSelectedSport('padel')}
+                      className={`py-3.5 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
                         selectedSport === 'padel'
-                          ? 'bg-emerald-400 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-400/20 scale-[1.02]'
+                          ? 'bg-emerald-400 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-400/20'
                           : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
                       }`}
                     >
@@ -200,10 +279,10 @@ export default function App() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => { setSelectedSport('futbol'); setSelectedTime(null); }}
-                      className={`py-4 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
+                      onClick={() => setSelectedSport('futbol')}
+                      className={`py-3.5 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
                         selectedSport === 'futbol'
-                          ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20 scale-[1.02]'
+                          ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20'
                           : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
                       }`}
                     >
@@ -212,10 +291,33 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 2. CALENDARIO INTERACTIVO (DÍAS) */}
+                <button
+                  type="submit"
+                  className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  Ver Canchas y Horarios Disponibles <ArrowRight className="w-5 h-5" />
+                </button>
+              </form>
+            )}
+
+            {/* PASO 3: CALENDARIO Y HORARIOS */}
+            {step === 'booking' && (
+              <div className="space-y-8 animate-fade-in">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                  <button 
+                    type="button" 
+                    onClick={() => setStep('details')} 
+                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> Cambiar datos
+                  </button>
+                  <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">Paso 3 de 3 • Hola, {name}</span>
+                </div>
+
+                {/* Selección de Día */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-emerald-400" /> 2. Seleccioná el Día del Partido
+                    <Calendar className="w-4 h-4 text-emerald-400" /> Seleccioná el Día
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     {availableDays.map((day) => (
@@ -223,23 +325,23 @@ export default function App() {
                         key={day.index}
                         type="button"
                         onClick={() => { setSelectedDay(day.index); setSelectedTime(null); }}
-                        className={`p-3.5 rounded-2xl border text-center transition flex flex-col items-center justify-center cursor-pointer ${
+                        className={`p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center cursor-pointer ${
                           selectedDay === day.index
                             ? 'bg-emerald-400 text-slate-950 border-emerald-400 font-black shadow-lg shadow-emerald-400/20 scale-105'
                             : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
                         }`}
                       >
-                        <span className="text-xs uppercase font-extrabold opacity-80">{day.label}</span>
-                        <span className="text-sm font-black mt-0.5">{day.dateNum}</span>
+                        <span className="text-[10px] uppercase font-extrabold opacity-80">{day.label}</span>
+                        <span className="text-xs font-black mt-0.5">{day.dateNum}</span>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* 3. SELECCIÓN DE HORARIOS DISPONIBLES */}
+                {/* Selección de Horario */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-emerald-400" /> 3. Seleccioná el Horario Disponible
+                    <Clock className="w-4 h-4 text-emerald-400" /> Horarios para {selectedSport === 'padel' ? 'Pádel Pro' : 'Fútbol 7'}
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {hours.map((h, idx) => (
@@ -247,7 +349,7 @@ export default function App() {
                         key={idx}
                         disabled={!h.available}
                         onClick={() => setSelectedTime(h.time)}
-                        className={`p-4 rounded-2xl border text-center transition flex flex-col items-center justify-center relative overflow-hidden ${
+                        className={`p-3.5 rounded-2xl border text-center transition flex flex-col items-center justify-center relative overflow-hidden ${
                           !h.available
                             ? 'bg-slate-900/30 border-slate-900 text-slate-600 cursor-not-allowed opacity-40'
                             : selectedTime === h.time
@@ -255,10 +357,10 @@ export default function App() {
                             : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-emerald-500/50 cursor-pointer'
                         }`}
                       >
-                        <span className="text-lg font-black">{h.time}</span>
-                        <span className="text-xs opacity-90 mt-1 font-bold">{h.available ? h.price : 'Ocupado'}</span>
+                        <span className="text-base font-black">{h.time}</span>
+                        <span className="text-xs opacity-90 mt-0.5 font-bold">{h.available ? h.price : 'Ocupado'}</span>
                         {h.available && (
-                          <span className="absolute top-1 right-2 text-[9px] font-extrabold uppercase px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
+                          <span className="absolute top-1 right-2 text-[8px] font-extrabold uppercase px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
                             {h.tag}
                           </span>
                         )}
@@ -267,59 +369,43 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* FORMULARIO DE DATOS FINALES */}
+                {/* BOTÓN FINAL DE CONFIRMACIÓN */}
                 {selectedTime && (
-                  <form onSubmit={handleBookingSubmit} className="pt-6 border-t border-slate-800 space-y-4 animate-fade-in">
-                    <h3 className="text-lg font-black text-white flex items-center gap-2">
-                      <CheckCircle2 className="w-5 h-5 text-emerald-400" /> ¡Completá tus datos para asegurar el turno!
-                    </h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                      <input
-                        type="text"
-                        placeholder="Nombre y Apellido"
-                        required
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-emerald-400"
-                      />
-                      <input
-                        type="tel"
-                        placeholder="Teléfono / WhatsApp"
-                        required
-                        value={formData.phone}
-                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                        className="bg-slate-900 border border-slate-800 rounded-xl px-4 py-3.5 text-white text-sm focus:outline-none focus:border-emerald-400"
-                      />
-                    </div>
+                  <div className="pt-4 border-t border-slate-800 animate-fade-in">
                     <button
-                      type="submit"
+                      type="button"
+                      onClick={handleFinalBooking}
                       className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      Confirmar Reserva de Cancha 🚀
+                      Confirmar Turno ({selectedTime} hs) 🚀
                     </button>
-                  </form>
+                  </div>
                 )}
               </div>
-            ) : (
-              <div className="text-center py-12 space-y-6">
+            )}
+
+            {/* PANTALLA DE ÉXITO */}
+            {step === 'success' && (
+              <div className="text-center py-12 space-y-6 animate-fade-in">
                 <div className="w-20 h-20 bg-emerald-400/20 border border-emerald-400 text-emerald-400 rounded-full flex items-center justify-center mx-auto text-3xl font-black animate-bounce">
                   ✓
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-white">¡Turno Solicitado con Éxito!</h3>
+                  <h3 className="text-2xl font-black text-white">¡Reserva Exitosa, {name}!</h3>
                   <p className="text-slate-400 text-sm max-w-md mx-auto">
-                    Impecable <span className="text-white font-bold">{formData.name}</span>. Apartamos tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> para el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>.
+                    Guardamos tu turno de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> para el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. Te enviamos el comprobante a <span className="text-white font-bold">{phone}</span>.
                   </p>
                 </div>
                 <button
                   type="button"
-                  onClick={() => { setBookingConfirmed(false); setSelectedTime(null); setFormData({ name: '', phone: '' }); }}
+                  onClick={resetBooking}
                   className="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl font-bold text-sm transition cursor-pointer border border-slate-700"
                 >
                   Hacer otra reserva
                 </button>
               </div>
             )}
+
           </div>
         </div>
       </section>
