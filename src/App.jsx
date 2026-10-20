@@ -167,14 +167,14 @@ export default function App() {
           </div>
 
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
-            EL PARTIDAZO DE LA <br />
+            EL FULBITO DE LA SEMANA SE JUEGA EN  <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-              SEMANA SE JUEGA EN LES COURTS
+               LES COURTS
             </span>
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-medium">
-            Viví la mejor experiencia deportiva con canchas de primer nivel, iluminación LED profesional y el mejor tercer tiempo.
+            Viví la mejor experiencia deportiva con canchas de primer nivel, iluminación de calidad, seguridad y el mejor tercer tiempo.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -478,7 +478,9 @@ export default function App() {
             <div className="bg-emerald-400 p-1.5 rounded-lg text-slate-950 font-black text-xs">LC</div>
             <span className="font-bold text-white text-base">LES COURTS</span>
           </div>
-          <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.</p>
+          <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.
+            Desarollado por Mateo Diaz
+          </p>
           <div className="flex items-center space-x-4">
             <a 
               href="https://www.instagram.com/lescourts" 
