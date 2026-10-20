@@ -3,198 +3,144 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FutbolControl - Gestión de Escuelita de Fútbol</title>
-    <!-- Tailwind CSS CDN -->
+    <title>Les Courts - Pádel & Fútbol 7</title>
+    <!-- Tailwind CSS para componentes rápidos -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome para iconos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-emerald-500 selection:text-white">
+<body class="bg-slate-950 text-slate-100">
 
-    <!-- Header / Navbar -->
-    <header class="bg-slate-900 border-b border-slate-800 sticky top-0 z-30 shadow-md">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+    <!-- Header / Navegación -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-emerald-600 text-white p-3 rounded-xl shadow-lg shadow-emerald-900/40">
-                    <i class="fa-solid fa-futbol text-2xl animate-bounce"></i>
+                <div class="bg-emerald-600 text-white p-2.5 rounded-xl">
+                    <i class="fa-solid fa-volleyball text-lg"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold tracking-tight text-white">Escuelita de Fútbol <span class="text-emerald-400 text-sm font-normal">Panel Profe</span></h1>
-                    <p class="text-xs text-slate-400">Control de Alumnos, Categorías y Cuotas</p>
+                    <h1 class="font-bold text-lg tracking-tight">LES COURTS</h1>
+                    <p class="text-xs text-slate-400">Complejo Deportivo</p>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-3">
-                <button onclick="openModal()" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-4 py-2.5 rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2 cursor-pointer">
-                    <i class="fa-solid fa-user-plus"></i> Nuevo Alumno
-                </button>
-            </div>
+            <a href="#reservas" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-600/20">
+                Reservar Turno
+            </a>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8 space-y-8">
+    <main class="max-w-7xl mx-auto px-4 py-8 space-y-12">
 
-        <!-- Stats Grid / Dashboard -->
-        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                <div class="flex justify-between items-start">
+        <!-- Hero / Presentación -->
+        <section class="text-center space-y-4 py-12 bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 rounded-3xl p-8 shadow-2xl">
+            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+                Instalaciones de Primer Nivel
+            </span>
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white">Viví el deporte al máximo</h2>
+            <p class="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
+                Canchas de pádel vidriadas y fútbol 7 de césped sintético profesional. Gestioná tu turno y consultá la disponibilidad en tiempo real.
+            </p>
+        </section>
+
+        <!-- Servicios / Canchas que ofrece el complejo -->
+        <section class="space-y-6">
+            <h3 class="text-xl font-bold text-white flex items-center gap-2">
+                <i class="fa-solid fa-medal text-emerald-400"></i> Nuestros Servicios y Canchas
+            </h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Cancha de Fútbol 7 -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
                     <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Alumnos</p>
-                        <h3 id="statTotal" class="text-3xl font-bold text-white mt-1">0</h3>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold px-3 py-1 rounded-full">Fútbol 7</span>
+                            <span class="text-emerald-400 font-bold">$35.000 <span class="text-xs text-slate-400 font-normal">/ turno</span></span>
+                        </div>
+                        <h4 class="text-lg font-bold text-white">Cancha Césped Sintético Profesional</h4>
+                        <p class="text-xs text-slate-400 mt-2">Césped de última generación, iluminación LED de alta potencia para partidos nocturnos y medidas reglamentarias.</p>
                     </div>
-                    <div class="p-3 bg-blue-500/10 text-blue-400 rounded-xl">
-                        <i class="fa-solid fa-users text-xl"></i>
-                    </div>
+                    <button onclick="seleccionarCanchaServicio('Fútbol 7')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium py-2.5 rounded-xl transition-colors cursor-pointer">
+                        Ver disponibilidad para Fútbol 7
+                    </button>
                 </div>
-            </div>
 
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                <div class="flex justify-between items-start">
+                <!-- Cancha de Pádel -->
+                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
                     <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Cuotas al Día</p>
-                        <h3 id="statPagados" class="text-3xl font-bold text-emerald-400 mt-1">0</h3>
+                        <div class="flex justify-between items-start mb-3">
+                            <span class="bg-sky-500/10 text-sky-400 border border-sky-500/20 text-xs font-bold px-3 py-1 rounded-full">Pádel</span>
+                            <span class="text-sky-400 font-bold">$18.000 <span class="text-xs text-slate-400 font-normal">/ turno</span></span>
+                        </div>
+                        <h4 class="text-lg font-bold text-white">Cancha Blindex Panorámica</h4>
+                        <p class="text-xs text-slate-400 mt-2">Estructura de blindex templado, superficie sintética profesional y salida reglamentaria para torneos o juego recreativo.</p>
                     </div>
-                    <div class="p-3 bg-emerald-500/10 text-emerald-400 rounded-xl">
-                        <i class="fa-solid fa-circle-check text-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Deudores</p>
-                        <h3 id="statDeudores" class="text-3xl font-bold text-rose-400 mt-1">0</h3>
-                    </div>
-                    <div class="p-3 bg-rose-500/10 text-rose-400 rounded-xl">
-                        <i class="fa-solid fa-triangle-exclamation text-xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-slate-900 border border-slate-800 p-5 rounded-2xl shadow-sm">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-semibold uppercase tracking-wider text-slate-400">Recaudación Estimada</p>
-                        <h3 id="statRecaudacion" class="text-3xl font-bold text-sky-400 mt-1">$0</h3>
-                    </div>
-                    <div class="p-3 bg-sky-500/10 text-sky-400 rounded-xl">
-                        <i class="fa-solid fa-wallet text-xl"></i>
-                    </div>
+                    <button onclick="seleccionarCanchaServicio('Pádel')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium py-2.5 rounded-xl transition-colors cursor-pointer">
+                        Ver disponibilidad para Pádel
+                    </button>
                 </div>
             </div>
         </section>
 
-        <!-- Search and Filters Section -->
-        <section class="bg-slate-900 border border-slate-800 p-4 rounded-2xl flex flex-col md:flex-row gap-4 justify-between items-center">
-            <div class="relative w-full md:w-96">
-                <i class="fa-solid fa-search absolute left-3.5 top-3.5 text-slate-400"></i>
-                <input type="text" id="searchInput" oninput="filterAlumnos()" placeholder="Buscar por nombre o categoría..." 
-                    class="w-full bg-slate-950 border border-slate-800 text-slate-100 pl-10 pr-4 py-2.5 rounded-xl focus:outline-none focus:border-emerald-500 transition-colors text-sm">
+        <!-- Sistema de Reservas con Calendario y Disponibilidad -->
+        <section id="reservas" class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl max-w-3xl mx-auto space-y-6">
+            <div class="text-center space-y-1">
+                <h3 class="text-xl font-bold text-white">Calendario y Gestión de Reservas</h3>
+                <p class="text-xs text-slate-400">Seleccioná una fecha para ver los turnos ocupados y libres del complejo.</p>
             </div>
 
-            <div class="flex items-center gap-3 w-full md:w-auto">
-                <select id="filterEstado" onchange="filterAlumnos()" class="bg-slate-950 border border-slate-800 text-slate-300 px-4 py-2.5 rounded-xl focus:outline-none focus:border-emerald-500 text-sm w-full md:w-auto">
-                    <option value="todos">Todos los estados</option>
-                    <option value="pagado">Al día (Pagado)</option>
-                    <option value="debe">Deudores</option>
-                </select>
+            <!-- Selector de Fecha -->
+            <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-slate-950 p-4 rounded-2xl border border-slate-800">
+                <div class="w-full sm:w-auto flex-1">
+                    <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Elegir Fecha de Consulta</label>
+                    <input type="date" id="fechaReserva" onchange="actualizarCalendario()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-slate-100 text-sm focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="w-full sm:w-auto flex-1">
+                    <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Filtrar por Cancha</label>
+                    <select id="filtroCanchaCalendario" onchange="actualizarCalendario()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-slate-100 text-sm focus:outline-none focus:border-emerald-500">
+                        <option value="todas">Todas las canchas</option>
+                        <option value="Fútbol 7">Cancha Fútbol 7</option>
+                        <option value="Pádel">Cancha Pádel</option>
+                    </select>
+                </div>
             </div>
-        </section>
 
-        <!-- Alumnos Table Section -->
-        <section class="bg-slate-900 border border-slate-800 rounded-2xl overflow-hidden shadow-xl">
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-slate-950/60 border-b border-slate-800 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                            <th class="p-4">Alumno</th>
-                            <th class="p-4">Categoría / Edad</th>
-                            <th class="p-4">Teléfono / Contacto</th>
-                            <th class="p-4">Estado Cuota</th>
-                            <th class="p-4 text-center">Acciones de Pago (MP)</th>
-                            <th class="p-4 text-right">Opciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="alumnosTableBody" class="divide-y divide-slate-800/60 text-sm">
-                        <!-- Inyectado dinámicamente con JS -->
-                    </tbody>
-                </table>
+            <!-- Grilla Visual de Horarios (Ocupado / Libre) -->
+            <div class="space-y-3">
+                <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Estado de Turnos para la fecha seleccionada:</h4>
+                <div id="grillaTurnos" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <!-- Inyectado dinámicamente con JS -->
+                </div>
             </div>
-            <!-- Empty state -->
-            <div id="emptyState" class="hidden p-12 text-center flex flex-col items-center justify-center space-y-3">
-                <div class="text-slate-600 text-4xl"><i class="fa-solid fa-folder-open"></i></div>
-                <p class="text-slate-400 font-medium">No se encontraron alumnos registrados.</p>
-            </div>
+
+            <!-- Formulario para reservar el turno seleccionado -->
+            <form id="formReservarTurno" onsubmit="confirmarReserva(event)" class="border-t border-slate-800 pt-6 space-y-4">
+                <h4 class="font-bold text-sm text-white">Completar datos para confirmar el turno:</h4>
+                <input type="hidden" id="horarioSeleccionado">
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Nombre y Apellido</label>
+                        <input type="text" id="nombreCliente" required placeholder="Ej: Lionel Messi" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Teléfono / WhatsApp</label>
+                        <input type="text" id="telefonoCliente" required placeholder="Ej: 3512345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <div id="turnoElegidoTexto" class="text-xs text-emerald-400 font-medium">Ningún turno seleccionado (Hacé clic en "Reservar" en la grilla superior).</div>
+                </div>
+
+                <button type="submit" id="btnConfirmar" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-3 rounded-xl transition-all cursor-not-allowed text-sm">
+                    Seleccioná un horario libre arriba
+                </button>
+            </form>
         </section>
 
     </main>
 
-    <!-- Modal Formulario Alumno -->
-    <div id="alumnoModal" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-            <div class="flex justify-between items-center p-5 border-b border-slate-800">
-                <h3 id="modalTitle" class="font-bold text-lg text-white">Registrar Nuevo Alumno</h3>
-                <button onclick="closeModal()" class="text-slate-400 hover:text-white cursor-pointer"><i class="fa-solid fa-xmark text-lg"></i></button>
-            </div>
-            
-            <form id="alumnoForm" onsubmit="saveAlumno(event)" class="p-5 space-y-4">
-                <input type="hidden" id="alumnoId">
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Nombre Completo</label>
-                    <input type="text" id="nombre" required placeholder="Ej: Lionel Pérez" 
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Categoría</label>
-                    <input type="text" id="categoria" required placeholder="Ej: Sub-15 / 2011" 
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Teléfono / WhatsApp</label>
-                    <input type="text" id="telefono" required placeholder="Ej: 3512345678" 
-                        class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-emerald-500">
-                </div>
-                <div>
-                    <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Estado de Cuota</label>
-                    <select id="estado" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 focus:outline-none focus:border-emerald-500">
-                        <option value="debe">Debe Cuota</option>
-                        <option value="pagado">Pagado (Al día)</option>
-                    </select>
-                </div>
-                
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-800">
-                    <button type="button" onclick="closeModal()" class="px-4 py-2.5 rounded-xl border border-slate-800 text-slate-300 hover:bg-slate-800 cursor-pointer text-sm font-medium">Cancelar</button>
-                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white px-5 py-2.5 rounded-xl font-medium shadow-lg shadow-emerald-600/20 cursor-pointer text-sm">Guardar Alumno</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Modal Simulador Mercado Pago -->
-    <div id="mpModal" class="fixed inset-0 bg-black/70 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 w-full max-w-sm rounded-2xl shadow-2xl p-6 text-center space-y-4">
-            <div class="w-16 h-16 bg-sky-500/10 text-sky-400 rounded-full flex items-center justify-center mx-auto text-2xl">
-                <i class="fa-solid fa-qrcode"></i>
-            </div>
-            <h3 class="font-bold text-lg text-white">Enlace de Pago - Mercado Pago</h3>
-            <p class="text-xs text-slate-400">Simulación de link de cobro generado para el alumno <span id="mpAlumnoName" class="text-white font-semibold"></span>.</p>
-            <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-xs font-mono text-sky-300 break-all">
-                https://mpago.la/simulacion-cobro-futbol
-            </div>
-            <div class="flex flex-col gap-2 pt-2">
-                <button onclick="simularPagoExitoso()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold py-2.5 rounded-xl shadow-lg transition-all cursor-pointer text-sm">
-                    Simular Pago Exitoso ($15.000)
-                </button>
-                <button onclick="closeMpModal()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium py-2 rounded-xl text-xs cursor-pointer">
-                    Cerrar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Script de la aplicación -->
     <script src="app.js"></script>
 </body>
 </html>

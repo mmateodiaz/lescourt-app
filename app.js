@@ -1,202 +1,123 @@
-// Base de datos local en memoria y LocalStorage
-let alumnos = JSON.parse(localStorage.getItem('futbol_alumnos')) || [
-    { id: 1, nombre: 'Lucas Gómez', categoria: 'Sub-15', telefono: '3515442211', estado: 'pagado' },
-    { id: 2, nombre: 'Mateo Fernández', categoria: 'Sub-17', telefono: '3516778899', estado: 'debe' },
-    { id: 3, nombre: 'Joaquín Benítez', categoria: 'Sub-15', telefono: '3519881122', estado: 'pagado' },
-    { id: 4, nombre: 'Thiago Silva', categoria: 'Sub-13', telefono: '3513334455', estado: 'debe' }
+// Base de datos local de reservas del complejo Les Courts
+let reservasComplejo = JSON.parse(localStorage.getItem('lescourts_reservas')) || [
+    { fecha: '2026-10-20', cancha: 'Fútbol 7', horario: '21:00 hs', cliente: 'Carlos T.', telefono: '3514112233' },
+    { fecha: '2026-10-20', cancha: 'Pádel', horario: '19:30 hs', cliente: 'Agustín P.', telefono: '3519988776' }
 ];
 
-let currentMpId = null;
+// Horarios fijos que maneja el complejo por día
+const horariosDisponibles = ['17:00 hs', '18:30 hs', '20:00 hs', '21:30 hs', '23:00 hs'];
 
-// Inicializar al cargar
 document.addEventListener('DOMContentLoaded', () => {
-    renderAlumnos();
+    // Settear la fecha de hoy por defecto en el input date
+    const hoy = new Date().toISOString().split('T')[0];
+    document.getElementById('fechaReserva').value = hoy;
+    actualizarCalendario();
 });
 
-// Guardar en LocalStorage
-function saveToStorage() {
-    localStorage.setItem('futbol_alumnos', JSON.stringify(alumnos));
+function saveStorage() {
+    localStorage.setItem('lescourts_reservas', JSON.stringify(reservasComplejo));
 }
 
-// Renderizar tabla y estadísticas
-function renderAlumnos(filteredList = null) {
-    const listToRender = filteredList || alumnos;
-    const tbody = document.getElementById('alumnosTableBody');
-    const emptyState = document.getElementById('emptyState');
+// Función principal para renderizar la grilla de turnos según la fecha y cancha seleccionada
+function actualizarCalendario() {
+    const fechaSeleccionada = document.getElementById('fechaReserva').value;
+    const canchaFiltro = document.getElementById('filtroCanchaCalendario').value;
+    const grilla = document.getElementById('grillaTurnos');
     
-    tbody.innerHTML = '';
+    grilla.innerHTML = '';
 
-    if (listToRender.length === 0) {
-        emptyState.classList.remove('hidden');
-    } else {
-        emptyState.classList.add('hidden');
-        
-        listToRender.forEach(alumno => {
-            const tr = document.createElement('tr');
-            tr.className = 'hover:bg-slate-800/40 transition-colors';
-            
-            const badgeClass = alumno.estado === 'pagado' 
-                ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' 
-                : 'bg-rose-500/10 text-rose-400 border border-rose-500/20';
-            
-            const badgeText = alumno.estado === 'pagado' ? 'Al Día' : 'Debe Cuota';
-            
-            tr.innerHTML = `
-                <td class="p-4 font-medium text-white">${alumno.nombre}</td>
-                <td class="p-4 text-slate-300"><span class="bg-slate-800 px-2.5 py-1 rounded-md text-xs font-mono">${alumno.categoria}</span></td>
-                <td class="p-4 text-slate-300"><i class="fa-brands fa-whatsapp text-emerald-500 mr-1.5"></i>${alumno.telefono}</td>
-                <td class="p-4">
-                    <span class="px-3 py-1 rounded-full text-xs font-semibold ${badgeClass}">
-                        ${badgeText}
-                    </span>
-                </td>
-                <td class="p-4 text-center">
-                    <button onclick="openMpModal(${alumno.id})" class="bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 px-3 py-1.5 rounded-xl text-xs font-medium transition-all inline-flex items-center gap-1.5 cursor-pointer">
-                        <i class="fa-solid fa-credit-card"></i> Pagar (MP)
+    // Definimos qué canchas mostrar en la grilla
+    const canchasAExaminar = canchaFiltro === 'todas' ? ['Fútbol 7', 'Pádel'] : [canchaFiltro];
+
+    canchasAExaminar.forEach(cancha => {
+        horariosDisponibles.forEach(horario => {
+            // Buscamos si ya existe una reserva para esta fecha, cancha y horario
+            const reservaExistente = reservasComplejo.find(r => r.fecha === fechaSeleccionada && r.cancha === cancha && r.horario === horario);
+
+            const card = document.createElement('div');
+            card.className = "p-3.5 rounded-xl border flex justify-between items-center text-xs";
+
+            if (reservaExistente) {
+                // Turno Ocupado
+                card.className += " bg-rose-500/5 border-rose-500/20 text-rose-300";
+                card.innerHTML = `
+                    <div>
+                        <strong class="text-white">${cancha}</strong> - ${horario}<br>
+                        <span class="text-slate-400">Ocupado por: ${reservaExistente.cliente}</span>
+                    </div>
+                    <span class="bg-rose-500/10 text-rose-400 px-2.5 py-1 rounded-md font-semibold">Ocupado</span>
+                `;
+            } else {
+                // Turno Libre
+                card.className += " bg-emerald-500/5 border-emerald-500/20 text-slate-300 hover:bg-emerald-500/10 transition-colors";
+                card.innerHTML = `
+                    <div>
+                        <strong class="text-white">${cancha}</strong> - ${horario}<br>
+                        <span class="text-emerald-400 font-medium">Disponible</span>
+                    </div>
+                    <button type="button" onclick="seleccionarTurnoLibre('${cancha}', '${horario}')" class="bg-emerald-600 hover:bg-emerald-500 text-white font-medium px-3 py-1.5 rounded-lg transition-all cursor-pointer">
+                        Reservar
                     </button>
-                </td>
-                <td class="p-4 text-right space-x-2">
-                    <button onclick="editAlumno(${alumno.id})" class="text-slate-400 hover:text-sky-400 transition-colors p-1 cursor-pointer" title="Editar">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <button onclick="deleteAlumno(${alumno.id})" class="text-slate-400 hover:text-rose-400 transition-colors p-1 cursor-pointer" title="Eliminar">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
-                </td>
-            `;
-            tbody.appendChild(tr);
+                `;
+            }
+            grilla.appendChild(card);
         });
-    }
-
-    updateStats();
-}
-
-// Actualizar estadísticas del Dashboard
-function updateStats() {
-    const total = alumnos.length;
-    const pagados = alumnos.filter(a => a.estado === 'pagado').length;
-    const deudores = total - pagados;
-    const valorCuota = 15000; // Valor base de la cuota
-    const recaudacion = pagados * valorCuota;
-
-    document.getElementById('statTotal').innerText = total;
-    document.getElementById('statPagados').innerText = pagados;
-    document.getElementById('statDeudores').innerText = deudores;
-    document.getElementById('statRecaudacion').innerText = `$${recaudacion.toLocaleString()}`;
-}
-
-// Manejo del Modal de Alumno
-function openModal(id = null) {
-    const modal = document.getElementById('alumnoModal');
-    const title = document.getElementById('modalTitle');
-    document.getElementById('alumnoForm').reset();
-    document.getElementById('alumnoId').value = '';
-
-    if (id) {
-        title.innerText = 'Editar Alumno';
-        const alumno = alumnos.find(a => a.id === id);
-        if (alumno) {
-            document.getElementById('alumnoId').value = alumno.id;
-            document.getElementById('nombre').value = alumno.nombre;
-            document.getElementById('categoria').value = alumno.categoria;
-            document.getElementById('telefono').value = alumno.telefono;
-            document.getElementById('estado').value = alumno.estado;
-        }
-    } else {
-        title.innerText = 'Registrar Nuevo Alumno';
-    }
-
-    modal.classList.remove('hidden');
-}
-
-function closeModal() {
-    document.getElementById('alumnoModal').classList.add('hidden');
-}
-
-// Guardar o Actualizar Alumno
-function saveAlumno(event) {
-    event.preventDefault();
-    const id = document.getElementById('alumnoId').value;
-    const nombre = document.getElementById('nombre').value;
-    const categoria = document.getElementById('categoria').value;
-    const telefono = document.getElementById('telefono').value;
-    const estado = document.getElementById('estado').value;
-
-    if (id) {
-        // Editar
-        const index = alumnos.findIndex(a => a.id == id);
-        if (index !== -1) {
-            alumnos[index] = { id: Number(id), nombre, categoria, telefono, estado };
-        }
-    } else {
-        // Crear nuevo
-        const newAlumno = {
-            id: Date.now(),
-            nombre,
-            categoria,
-            telefono,
-            estado
-        };
-        alumnos.push(newAlumno);
-    }
-
-    saveToStorage();
-    renderAlumnos();
-    closeModal();
-}
-
-// Eliminar Alumno
-function deleteAlumno(id) {
-    if (confirm('¿Estás seguro de eliminar este alumno?')) {
-        alumnos = alumnos.filter(a => a.id !== id);
-        saveToStorage();
-        renderAlumnos();
-    }
-}
-
-// Editar shortcut
-function editAlumno(id) {
-    openModal(id);
-}
-
-// Filtros y Búsqueda
-function filterAlumnos() {
-    const query = document.getElementById('searchInput').value.toLowerCase();
-    const estadoFiltro = document.getElementById('filterEstado').value;
-
-    const filtered = alumnos.filter(alumno => {
-        const matchesQuery = alumno.nombre.toLowerCase().includes(query) || alumno.categoria.toLowerCase().includes(query);
-        const matchesEstado = estadoFiltro === 'todos' || alumno.estado === estadoFiltro;
-        return matchesQuery && matchesEstado;
     });
 
-    renderAlumnos(filtered);
+    // Limpiar selección previa al cambiar fecha/filtro
+    resetearFormularioReserva();
 }
 
-// Simulador Mercado Pago
-function openMpModal(id) {
-    currentMpId = id;
-    const alumno = alumnos.find(a => a.id === id);
-    if (alumno) {
-        document.getElementById('mpAlumnoName').innerText = alumno.nombre;
-        document.getElementById('mpModal').classList.remove('hidden');
+function seleccionarCanchaServicio(cancha) {
+    document.getElementById('filtroCanchaCalendario').value = cancha;
+    actualizarCalendario();
+    window.location.href = '#reservas';
+}
+
+function seleccionarTurnoLibre(cancha, horario) {
+    const fecha = document.getElementById('fechaReserva').value;
+    document.getElementById('horarioSeleccionado').value = `${fecha}|${cancha}|${horario}`;
+    
+    const btn = document.getElementById('btnConfirmar');
+    btn.disabled = false;
+    btn.className = "w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl transition-all cursor-pointer text-sm shadow-lg shadow-emerald-600/20";
+    btn.textContent = `Confirmar Turno (${cancha} - ${horario} del ${fecha})`;
+
+    document.getElementById('turnoElegidoTexto').textContent = `Turno seleccionado: Cancha ${cancha} a las ${horario}.`;
+}
+
+function resetearFormularioReserva() {
+    document.getElementById('horarioSeleccionado').value = '';
+    const btn = document.getElementById('btnConfirmar');
+    btn.disabled = true;
+    btn.className = "w-full bg-slate-800 text-slate-500 font-bold py-3 rounded-xl transition-all cursor-not-allowed text-sm";
+    btn.textContent = "Seleccioná un horario libre arriba";
+    document.getElementById('turnoElegidoTexto').textContent = "Ningún turno seleccionado.";
+}
+
+function confirmarReserva(event) {
+    event.preventDefault();
+    const datos = document.getElementById('horarioSeleccionado').value;
+    if (!datos) return;
+
+    const [fecha, cancha, horario] = datos.split('|');
+    const cliente = document.getElementById('nombreCliente').value.trim();
+    const telefono = document.getElementById('telefonoCliente').value.trim();
+
+    // Validar por seguridad que no esté ocupado
+    const ocupado = reservasComplejo.some(r => r.fecha === fecha && r.cancha === cancha && r.horario === horario);
+    if (ocupado) {
+        alert('Lo sentimos, este turno acaba de ser reservado por otro usuario.');
+        actualizarCalendario();
+        return;
     }
-}
 
-function closeMpModal() {
-    document.getElementById('mpModal').classList.add('hidden');
-    currentMpId = null;
-}
+    reservasComplejo.push({ fecha, cancha, horario, cliente, telefono });
+    saveStorage();
+    actualizarCalendario();
 
-function simularPagoExitoso() {
-    if (currentMpId) {
-        const alumno = alumnos.find(a => a.id === currentMpId);
-        if (alumno) {
-            alumno.estado = 'pagado';
-            saveToStorage();
-            renderAlumnos();
-            alert(`¡Pago acreditado con éxito para ${alumno.nombre} vía Mercado Pago! Cuota al día.`);
-        }
-    }
-    closeMpModal();
+    document.getElementById('formReservarTurno').reset();
+    resetearFormularioReserva();
+
+    alert(`¡Reserva confirmada con éxito!\n\nComplejo: Les Courts\nCancha: ${cancha}\nFecha: ${fecha}\nHorario: ${horario}`);
 }
