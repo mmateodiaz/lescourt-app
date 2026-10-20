@@ -3,144 +3,75 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Les Courts - Pádel & Fútbol 7</title>
-    <!-- Tailwind CSS para componentes rápidos -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- FontAwesome para iconos -->
+    <title>Les Courts - Complejo Deportivo</title>
+    <!-- FontAwesome para iconos deportivos -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-slate-950 text-slate-100">
+<body>
 
-    <!-- Header / Navegación -->
-    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-30">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="bg-emerald-600 text-white p-2.5 rounded-xl">
-                    <i class="fa-solid fa-volleyball text-lg"></i>
+    <!-- Main Wrapper a pantalla completa -->
+    <div class="main-wrapper">
+
+        <!-- Header / Logo Centrado Arriba -->
+        <header class="complex-header">
+            <div class="logo-container">
+                <div class="logo-circle">
+                    <i class="fa-solid fa-volleyball"></i>
                 </div>
-                <div>
-                    <h1 class="font-bold text-lg tracking-tight">LES COURTS</h1>
-                    <p class="text-xs text-slate-400">Complejo Deportivo</p>
-                </div>
+                <h1 class="complex-title">LES COURTS</h1>
+                <p class="complex-subtitle">Complejo de Pádel & Fútbol 7</p>
             </div>
-            <a href="#reservas" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-emerald-600/20">
-                Reservar Turno
-            </a>
-        </div>
-    </header>
+        </header>
 
-    <main class="max-w-7xl mx-auto px-4 py-8 space-y-12">
-
-        <!-- Hero / Presentación -->
-        <section class="text-center space-y-4 py-12 bg-gradient-to-b from-slate-900 to-slate-950 border border-slate-800/80 rounded-3xl p-8 shadow-2xl">
-            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
-                Instalaciones de Primer Nivel
-            </span>
-            <h2 class="text-3xl md:text-5xl font-extrabold text-white">Viví el deporte al máximo</h2>
-            <p class="text-slate-400 max-w-xl mx-auto text-sm md:text-base">
-                Canchas de pádel vidriadas y fútbol 7 de césped sintético profesional. Gestioná tu turno y consultá la disponibilidad en tiempo real.
+        <!-- Sección de Presentación / Hero -->
+        <section class="section-card hero-section">
+            <h2>Viví la pasión al máximo</h2>
+            <p>
+                Disfrutá de nuestras instalaciones de primer nivel. Canchas de césped sintético profesional para fútbol 7 y blindex vidriado de última generación para pádel.
             </p>
         </section>
 
-        <!-- Servicios / Canchas que ofrece el complejo -->
-        <section class="space-y-6">
-            <h3 class="text-xl font-bold text-white flex items-center gap-2">
-                <i class="fa-solid fa-medal text-emerald-400"></i> Nuestros Servicios y Canchas
+        <!-- Sección de Servicios y Canchas -->
+        <section class="section-card">
+            <h3 style="font-size: 1.3rem; margin-bottom: 20px; color: var(--text-primary);">
+                <i class="fa-solid fa-medal mr-2" style="color: #059669;"></i> Nuestras Canchas y Servicios
             </h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Cancha de Fútbol 7 -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
+
+            <div class="services-grid">
+                <!-- Tarjeta Fútbol 7 -->
+                <div class="service-card futbol">
                     <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 text-xs font-bold px-3 py-1 rounded-full">Fútbol 7</span>
-                            <span class="text-emerald-400 font-bold">$35.000 <span class="text-xs text-slate-400 font-normal">/ turno</span></span>
+                        <div class="service-header">
+                            <span class="badge badge-futbol">Fútbol 7</span>
+                            <span class="service-price">$35.000 <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-secondary);">/ turno</span></span>
                         </div>
-                        <h4 class="text-lg font-bold text-white">Cancha Césped Sintético Profesional</h4>
-                        <p class="text-xs text-slate-400 mt-2">Césped de última generación, iluminación LED de alta potencia para partidos nocturnos y medidas reglamentarias.</p>
+                        <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Cancha Césped Sintético Pro</h4>
+                        <p class="service-description">
+                            Medidas reglamentarias, excelente iluminación LED nocturna y cierre perimetral seguro para disputar los mejores partidos con amigos.
+                        </p>
                     </div>
-                    <button onclick="seleccionarCanchaServicio('Fútbol 7')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium py-2.5 rounded-xl transition-colors cursor-pointer">
-                        Ver disponibilidad para Fútbol 7
-                    </button>
+                    <button class="btn-action" onclick="alert('Próximamente sección de reservas para Fútbol 7')">Consultar Horarios</button>
                 </div>
 
-                <!-- Cancha de Pádel -->
-                <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl flex flex-col justify-between">
+                <!-- Tarjeta Pádel -->
+                <div class="service-card padel">
                     <div>
-                        <div class="flex justify-between items-start mb-3">
-                            <span class="bg-sky-500/10 text-sky-400 border border-sky-500/20 text-xs font-bold px-3 py-1 rounded-full">Pádel</span>
-                            <span class="text-sky-400 font-bold">$18.000 <span class="text-xs text-slate-400 font-normal">/ turno</span></span>
+                        <div class="service-header">
+                            <span class="badge badge-padel">Pádel</span>
+                            <span class="service-price">$18.000 <span style="font-size: 0.8rem; font-weight: normal; color: var(--text-secondary);">/ turno</span></span>
                         </div>
-                        <h4 class="text-lg font-bold text-white">Cancha Blindex Panorámica</h4>
-                        <p class="text-xs text-slate-400 mt-2">Estructura de blindex templado, superficie sintética profesional y salida reglamentaria para torneos o juego recreativo.</p>
+                        <h4 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 8px;">Cancha Blindex Panorámica</h4>
+                        <p class="service-description">
+                            Estructura de blindex templado, superficie sintética profesional rizada y salida reglamentaria para torneos o práctica recreativa.
+                        </p>
                     </div>
-                    <button onclick="seleccionarCanchaServicio('Pádel')" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium py-2.5 rounded-xl transition-colors cursor-pointer">
-                        Ver disponibilidad para Pádel
-                    </button>
+                    <button class="btn-action" onclick="alert('Próximamente sección de reservas para Pádel')">Consultar Horarios</button>
                 </div>
             </div>
         </section>
 
-        <!-- Sistema de Reservas con Calendario y Disponibilidad -->
-        <section id="reservas" class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-xl max-w-3xl mx-auto space-y-6">
-            <div class="text-center space-y-1">
-                <h3 class="text-xl font-bold text-white">Calendario y Gestión de Reservas</h3>
-                <p class="text-xs text-slate-400">Seleccioná una fecha para ver los turnos ocupados y libres del complejo.</p>
-            </div>
+    </div>
 
-            <!-- Selector de Fecha -->
-            <div class="flex flex-col sm:flex-row gap-4 items-center justify-between bg-slate-950 p-4 rounded-2xl border border-slate-800">
-                <div class="w-full sm:w-auto flex-1">
-                    <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Elegir Fecha de Consulta</label>
-                    <input type="date" id="fechaReserva" onchange="actualizarCalendario()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-slate-100 text-sm focus:outline-none focus:border-emerald-500">
-                </div>
-                <div class="w-full sm:w-auto flex-1">
-                    <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Filtrar por Cancha</label>
-                    <select id="filtroCanchaCalendario" onchange="actualizarCalendario()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-2 text-slate-100 text-sm focus:outline-none focus:border-emerald-500">
-                        <option value="todas">Todas las canchas</option>
-                        <option value="Fútbol 7">Cancha Fútbol 7</option>
-                        <option value="Pádel">Cancha Pádel</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- Grilla Visual de Horarios (Ocupado / Libre) -->
-            <div class="space-y-3">
-                <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Estado de Turnos para la fecha seleccionada:</h4>
-                <div id="grillaTurnos" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <!-- Inyectado dinámicamente con JS -->
-                </div>
-            </div>
-
-            <!-- Formulario para reservar el turno seleccionado -->
-            <form id="formReservarTurno" onsubmit="confirmarReserva(event)" class="border-t border-slate-800 pt-6 space-y-4">
-                <h4 class="font-bold text-sm text-white">Completar datos para confirmar el turno:</h4>
-                <input type="hidden" id="horarioSeleccionado">
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Nombre y Apellido</label>
-                        <input type="text" id="nombreCliente" required placeholder="Ej: Lionel Messi" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-medium text-slate-400 uppercase mb-1">Teléfono / WhatsApp</label>
-                        <input type="text" id="telefonoCliente" required placeholder="Ej: 3512345678" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-slate-100 text-sm focus:outline-none focus:border-emerald-500">
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-3">
-                    <div id="turnoElegidoTexto" class="text-xs text-emerald-400 font-medium">Ningún turno seleccionado (Hacé clic en "Reservar" en la grilla superior).</div>
-                </div>
-
-                <button type="submit" id="btnConfirmar" disabled class="w-full bg-slate-800 text-slate-500 font-bold py-3 rounded-xl transition-all cursor-not-allowed text-sm">
-                    Seleccioná un horario libre arriba
-                </button>
-            </form>
-        </section>
-
-    </main>
-
-    <script src="app.js"></script>
 </body>
 </html>

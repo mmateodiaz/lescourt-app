@@ -1,11 +1,12 @@
+/* --- ESTILOS BASE LES COURTS --- */
 :root {
-    --bg-main: #090d16;
-    --bg-card: #111827;
-    --border-color: #1f293d;
-    --text-primary: #f8fafc;
-    --text-secondary: #94a3b8;
-    --accent-futbol: #10b981;
-    --accent-padel: #0ea5e9;
+    --bg-main: #f8fafc;
+    --card-bg: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --accent-futbol: #059669;
+    --accent-padel: #0284c7;
+    --border-color: #e2e8f0;
 }
 
 * {
@@ -19,22 +20,174 @@ body {
     background-color: var(--bg-main);
     color: var(--text-primary);
     min-height: 100vh;
-    padding-bottom: 40px;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Contenedor principal para mantener todo ordenado */
-.container {
-    max-width: 1100px;
+/* Contenedor a pantalla completa */
+.main-wrapper {
+    width: 100%;
+    max-width: 1400px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 24px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
 }
 
-/* Tarjetas con estilo deportivo moderno */
-.card {
-    background-color: var(--bg-card);
+/* Cabecera / Logo Centrado */
+header.complex-header {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 10px;
+}
+
+.logo-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-circle {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #059669, #0284c7);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.complex-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--text-primary);
+}
+
+.complex-subtitle {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* Secciones / Tarjetas de Presentación */
+.section-card {
+    background-color: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
+    padding: 32px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
+}
+
+.hero-section {
+    text-align: center;
+    background: linear-gradient(to bottom, #ffffff, #f1f5f9);
+    border-top: 4px solid #059669;
+}
+
+.hero-section h2 {
+    font-size: 2.2rem;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+}
+
+.hero-section p {
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+/* Grilla de Canchas y Servicios */
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+}
+
+.service-card {
+    background: white;
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
     padding: 24px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+}
+
+.service-card.futbol {
+    border-top: 4px solid var(--accent-futbol);
+}
+
+.service-card.padel {
+    border-top: 4px solid var(--accent-padel);
+}
+
+.service-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-futbol {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.badge-padel {
+    background-color: #e0f2fe;
+    color: #0369a1;
+}
+
+.service-price {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.service-description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
     margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.btn-action {
+    background-color: var(--text-primary);
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.btn-action:hover {
+    background-color: #334155;
 }
