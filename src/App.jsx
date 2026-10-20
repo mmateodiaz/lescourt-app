@@ -77,10 +77,10 @@ export default function App() {
     if (savedClients[phone]) {
       setName(savedClients[phone]);
       setIsReturningUser(true);
-      setStep('booking'); // Si ya existe, salteamos el nombre y vamos directo a las canchas
+      setStep('booking');
     } else {
       setIsReturningUser(false);
-      setStep('details'); // Si es nuevo, pedimos el nombre
+      setStep('details');
     }
   };
 
@@ -89,7 +89,6 @@ export default function App() {
     e.preventDefault();
     if (!name.trim()) return;
 
-    // Guardar cliente en localStorage
     const savedClients = JSON.parse(localStorage.getItem('lescourts_clients') || '{}');
     savedClients[phone] = name.trim();
     localStorage.setItem('lescourts_clients', JSON.stringify(savedClients));
@@ -97,21 +96,21 @@ export default function App() {
     setStep('booking');
   };
 
-  // PASO 3: Confirmar reserva, bloquear turno y abrir WhatsApp
+  // PASO 3: Confirmar reserva, bloquear turno y abrir WhatsApp hacia Les Courts
   const handleFinalBooking = () => {
     if (!selectedTime) return;
 
     const slotKey = `${selectedSport}_${currentFullDate}_${selectedTime}`;
     setBookedSlots(prev => ({ ...prev, [slotKey]: true }));
 
-    // Generar enlace automático de WhatsApp con los datos
+    // Generar mensaje oficial para Les Courts (+5493513988422)
     const dateLabel = availableDays[selectedDay].dateNum;
     const sportName = selectedSport === 'padel' ? 'Pádel Pro' : 'Fútbol 7';
-    const message = `¡Hola Les Courts! 🎾⚽ Soy *${name}* (Tel: ${phone}). Confirmo mi reserva de *${sportName}* para el día *${dateLabel}* a las *${selectedTime} hs*. ¡Nos vemos en la cancha!`;
+    const message = `¡Hola Les Courts! 🎾⚽ Vengo a confirmar mi reserva realizada correctamente.\n\n👤 *Cliente:* ${name}\n📱 *Teléfono:* ${phone}\n🏆 *Deporte:* ${sportName}\n📅 *Día:* ${dateLabel}\n⏰ *Horario:* ${selectedTime} hs\n\n¡Quedo a la espera de la confirmación final!`;
     const encodedMessage = encodeURIComponent(message);
     
-    // Número de contacto de Les Courts (ejemplo de Córdoba, podés cambiarlo por el real)
-    const whatsappUrl = `https://wa.me/5493510000000?text=${encodedMessage}`;
+    // Número oficial de Les Courts
+    const whatsappUrl = `https://wa.me/5493513988422?text=${encodedMessage}`;
     
     // Abrir WhatsApp en pestaña nueva
     window.open(whatsappUrl, '_blank');
@@ -229,7 +228,7 @@ export default function App() {
                 </div>
                 <h3 className="text-xl font-black text-slate-900">Bar y Tercer Tiempo</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Disfrutá de bebidas ultra frías, picadas y buena música después de cada partido en nuestro sector exclusivo para equipos.
+                  Disfrutá de bebidas ultra frías, picadas y buena música después de cada partido en nosso sector exclusivo para equipos.
                 </p>
               </div>
             </div>
@@ -439,7 +438,7 @@ export default function App() {
                       onClick={handleFinalBooking}
                       className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <MessageSquare className="w-5 h-5" /> Confirmar y Enviar WhatsApp ({selectedTime} hs) 🚀
+                      <MessageSquare className="w-5 h-5" /> Enviar WhatsApp a Les Courts ({selectedTime} hs) 🚀
                     </button>
                   </div>
                 )}
@@ -455,7 +454,7 @@ export default function App() {
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-white">¡Turno Reservado con Éxito!</h3>
                   <p className="text-slate-400 text-sm max-w-md mx-auto">
-                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp con el mensaje de confirmación para tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. ¡El turno ya figura como ocupado!
+                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp para enviarle la confirmación al complejo (<span className="text-emerald-400 font-bold">+54 9 351 398-8422</span>) para tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. ¡El turno ya figura como ocupado!
                   </p>
                 </div>
                 <button
