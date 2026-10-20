@@ -63,9 +63,9 @@ export default function App() {
           </div>
 
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
-            EL PARTIDAZO DE LA <br />
+            EL FULBITO DE LA  SEMANA SE JUEGA EN<br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-              SEMANA SE JUEGA EN LES COURTS
+              LES COURTS
             </span>
           </h1>
 
