@@ -69,24 +69,24 @@ export default function App() {
   const getHoursForSelection = (sede, sport) => {
     if (sede === 'rivera' && sport === 'futbol') {
       return [
-        { time: '10:00', price: '$95.000', tag: 'Diurno', rawPrice: 95000 },
-        { time: '12:00', price: '$95.000', tag: 'Diurno', rawPrice: 95000 },
-        { time: '15:00', price: '$95.000', tag: 'Diurno', rawPrice: 95000 },
-        { time: '18:00', price: '$95.000', tag: 'Diurno', rawPrice: 95000 },
-        { time: '20:00', price: '$105.000 (Efectivo $98.000)', tag: 'Promo Estelar', rawPrice: 105000 },
-        { time: '21:00', price: '$105.000 (Efectivo $98.000)', tag: 'Promo Estelar', rawPrice: 105000 },
-        { time: '22:00', price: '$105.000 (Efectivo $98.000)', tag: 'Promo Estelar', rawPrice: 105000 },
-        { time: '23:00', price: '$95.000', tag: 'Nocturno', rawPrice: 95000 },
+        { time: '10:00', price: '$95.000', tag: 'Diurno' },
+        { time: '12:00', price: '$95.000', tag: 'Diurno' },
+        { time: '15:00', price: '$95.000', tag: 'Diurno' },
+        { time: '18:00', price: '$95.000', tag: 'Diurno' },
+        { time: '20:00', price: '$105.000 (Efe $98k)', tag: 'Promo Estelar' },
+        { time: '21:00', price: '$105.000 (Efe $98k)', tag: 'Promo Estelar' },
+        { time: '22:00', price: '$105.000 (Efe $98k)', tag: 'Promo Estelar' },
+        { time: '23:00', price: '$95.000', tag: 'Nocturno' },
       ];
     } else if (sede === 'rivera' && sport === 'padel') {
       return [
-        { time: '10:00', price: '$24.000', tag: 'Sin Luz', rawPrice: 24000 },
-        { time: '12:00', price: '$24.000', tag: 'Sin Luz', rawPrice: 24000 },
-        { time: '15:00', price: '$24.000', tag: 'Sin Luz', rawPrice: 24000 },
-        { time: '18:00', price: '$28.000', tag: 'Con Luz', rawPrice: 28000 },
-        { time: '19:30', price: '$28.000', tag: 'Con Luz', rawPrice: 28000 },
-        { time: '21:00', price: '$28.000', tag: 'Con Luz', rawPrice: 28000 },
-        { time: '22:30', price: '$28.000', tag: 'Con Luz', rawPrice: 28000 },
+        { time: '10:00', price: '$24.000', tag: 'Sin Luz' },
+        { time: '12:00', price: '$24.000', tag: 'Sin Luz' },
+        { time: '15:00', price: '$24.000', tag: 'Sin Luz' },
+        { time: '18:00', price: '$28.000', tag: 'Con Luz' },
+        { time: '19:30', price: '$28.000', tag: 'Con Luz' },
+        { time: '21:00', price: '$28.000', tag: 'Con Luz' },
+        { time: '22:30', price: '$28.000', tag: 'Con Luz' },
       ];
     } else {
       // Villa Belgrano o deportes generales por defecto
@@ -163,10 +163,13 @@ export default function App() {
     const sedeName = selectedSede === 'belgrano' ? 'Villa Belgrano (Av. Laplace 550)' : 'Rivera Indarte (Av. Boderau 7700)';
     const sportName = selectedSport === 'padel' ? 'Pádel Pro' : selectedSport === 'futbol' ? 'Fútbol 7' : selectedSport === 'tenis' ? 'Tenis' : 'Squash';
     
+    // Seleccionar el número de WhatsApp según la sede elegida
+    const whatsappNumber = selectedSede === 'belgrano' ? '5493512353680' : '5493513988422';
+
     const message = `¡Hola Les Courts! 🎾⚽ Vengo a confirmar mi reserva.\n\n📍 *Sede:* ${sedeName}\n👤 *Cliente:* ${name}\n📱 *Teléfono:* ${phone}\n🏆 *Deporte:* ${sportName}\n📅 *Día:* ${dateLabel}\n⏰ *Horario:* ${selectedTime} hs\n\nQuedo atento para coordinar el envío de la seña y asegurar mi turno. ¡Gracias!`;
     const encodedMessage = encodeURIComponent(message);
     
-    const whatsappUrl = `https://wa.me/5493513988422?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
 
     setStep('success');
