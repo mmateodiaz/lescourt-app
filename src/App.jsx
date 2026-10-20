@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowRight, Trophy, Shield, Coffee } from 'lucide-react';
-import logoImg from './logo.png';
+import { ArrowRight, Trophy, Shield, Coffee, Zap } from 'lucide-react';
 
 export default function App() {
   const [selectedSport, setSelectedSport] = useState('padel');
@@ -30,9 +29,8 @@ export default function App() {
       <header className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-12 py-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="bg-slate-900/80 backdrop-blur border border-white/10 px-3 py-1.5 rounded-xl text-white font-black text-lg tracking-wider flex items-center gap-2">
-              <img src={logoImg} alt="Les Courts Logo" className="w-6 h-6 rounded object-cover" />
-              LES COURTS
+            <div className="bg-slate-900/80 backdrop-blur border border-white/10 px-4 py-2 rounded-xl text-white font-black text-lg tracking-wider flex items-center gap-2">
+              <span className="text-emerald-400">LC</span> LES COURTS
             </div>
           </div>
 
@@ -64,22 +62,12 @@ export default function App() {
             Fútbol 7 & Pádel Pro • Córdoba
           </div>
 
-          {/* TÍTULO PRINCIPAL */}
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
             EL PARTIDAZO DE LA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
-              SEMANA SE JUGA EN LES COURTS
+              SEMANA SE JUEGA EN LES COURTS
             </span>
           </h1>
-
-          {/* LOGO DEBAJO DEL TÍTULO */}
-          <div className="py-2">
-            <img 
-              src={logoImg} 
-              alt="Les Courts Logo Oficial" 
-              className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl shadow-2xl border-2 border-emerald-400/40 object-cover mx-auto transform hover:scale-105 transition duration-300" 
-            />
-          </div>
 
           <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-medium">
             Viví la mejor experiencia deportiva con canchas de primer nivel, iluminación LED profesional y el mejor tercer tiempo.
@@ -288,7 +276,7 @@ export default function App() {
       <footer className="bg-slate-950 border-t border-slate-900 py-12 text-slate-400 text-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-2">
-            <img src={logoImg} alt="Les Courts Logo" className="w-6 h-6 rounded object-cover" />
+            <div className="bg-emerald-400 p-1 rounded text-slate-950 font-black text-xs">LC</div>
             <span className="font-bold text-white text-base">LES COURTS</span>
           </div>
           <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.</p>
