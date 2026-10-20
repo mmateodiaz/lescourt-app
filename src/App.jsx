@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare } from 'lucide-react';
 
 export default function App() {
-  // Pasos del flujo: 'phone' -> 'details' -> 'booking' -> 'success'
+  // Pasos: 'phone' -> 'details' -> 'booking' -> 'success'
   const [step, setStep] = useState('phone');
   
   // Datos del cliente y reserva
@@ -11,6 +11,18 @@ export default function App() {
   const [selectedSport, setSelectedSport] = useState('padel');
   const [selectedDay, setSelectedDay] = useState(0);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [isReturningUser, setIsReturningUser] = useState(false);
+
+  // Base de datos de turnos ocupados por día/deporte/hora (guardada en localStorage)
+  const [bookedSlots, setBookedSlots] = useState(() => {
+    const saved = localStorage.getItem('lescourts_booked_slots');
+    return saved ? JSON.parse(saved) : {};
+  });
+
+  // Guardar turnos ocupados cada vez que cambien
+  useEffect(() => {
+    localStorage.setItem('lescourts_booked_slots', JSON.stringify(bookedSlots));
+  }, [bookedSlots]);
 
   // Generar próximos 5 días dinámicamente
   const getNextDays = () => {
@@ -30,34 +42,80 @@ export default function App() {
 
   const availableDays = getNextDays();
 
-  // Horarios disponibles según el deporte
-  const hours = selectedSport === 'padel' ? [
-    { time: '17:00', available: true, price: '$18.000', tag: 'Popular' },
-    { time: '18:30', available: false, price: '$20.000', tag: 'Ocupado' },
-    { time: '20:00', available: true, price: '$22.000', tag: '¡Estelar!' },
-    { time: '21:30', available: true, price: '$22.000', tag: 'Último' },
-    { time: '23:00', available: true, price: '$19.000', tag: 'Promo' },
+  // Horarios base según deporte
+  const baseHours = selectedSport === 'padel' ? [
+    { time: '17:00', price: '$18.000', tag: 'Popular' },
+    { time: '18:30', price: '$20.000', tag: 'Libre' },
+    { time: '20:00', price: '$22.000', tag: '¡Estelar!' },
+    { time: '21:30', price: '$22.000', tag: 'Último' },
+    { time: '23:00', price: '$19.000', tag: 'Promo' },
   ] : [
-    { time: '18:00', available: true, price: '$35.000', tag: 'Popular' },
-    { time: '19:30', available: true, price: '$40.000', tag: '¡Estelar!' },
-    { time: '21:00', available: false, price: '$40.000', tag: 'Ocupado' },
-    { time: '22:30', available: true, price: '$38.000', tag: 'Promo' },
+    { time: '18:00', price: '$35.000', tag: 'Popular' },
+    { time: '19:30', price: '$40.000', tag: '¡Estelar!' },
+    { time: '21:00', price: '$40.000', tag: 'Libre' },
+    { time: '22:30', price: '$38.000', tag: 'Promo' },
   ];
 
+  // Verificar si un horario está ocupado para el día y deporte actual
+  const currentFullDate = availableDays[selectedDay].fullDate;
+  const hours = baseHours.map(h => {
+    const slotKey = `${selectedSport}_${currentFullDate}_${h.time}`;
+    const isBooked = bookedSlots[slotKey] || false;
+    return {
+      ...h,
+      available: !isBooked,
+      tag: isBooked ? 'Ocupado' : h.tag
+    };
+  });
+
+  // PASO 1: Validar teléfono y buscar si ya existe el cliente en localStorage
   const handlePhoneSubmit = (e) => {
     e.preventDefault();
     if (!phone || phone.length < 6) return;
-    setStep('details');
+
+    const savedClients = JSON.parse(localStorage.getItem('lescourts_clients') || '{}');
+    if (savedClients[phone]) {
+      setName(savedClients[phone]);
+      setIsReturningUser(true);
+      setStep('booking'); // Si ya existe, salteamos el nombre y vamos directo a las canchas
+    } else {
+      setIsReturningUser(false);
+      setStep('details'); // Si es nuevo, pedimos el nombre
+    }
   };
 
+  // PASO 2: Guardar nuevo cliente y avanzar
   const handleDetailsSubmit = (e) => {
     e.preventDefault();
     if (!name.trim()) return;
+
+    // Guardar cliente en localStorage
+    const savedClients = JSON.parse(localStorage.getItem('lescourts_clients') || '{}');
+    savedClients[phone] = name.trim();
+    localStorage.setItem('lescourts_clients', JSON.stringify(savedClients));
+
     setStep('booking');
   };
 
+  // PASO 3: Confirmar reserva, bloquear turno y abrir WhatsApp
   const handleFinalBooking = () => {
     if (!selectedTime) return;
+
+    const slotKey = `${selectedSport}_${currentFullDate}_${selectedTime}`;
+    setBookedSlots(prev => ({ ...prev, [slotKey]: true }));
+
+    // Generar enlace automático de WhatsApp con los datos
+    const dateLabel = availableDays[selectedDay].dateNum;
+    const sportName = selectedSport === 'padel' ? 'Pádel Pro' : 'Fútbol 7';
+    const message = `¡Hola Les Courts! 🎾⚽ Soy *${name}* (Tel: ${phone}). Confirmo mi reserva de *${sportName}* para el día *${dateLabel}* a las *${selectedTime} hs*. ¡Nos vemos en la cancha!`;
+    const encodedMessage = encodeURIComponent(message);
+    
+    // Número de contacto de Les Courts (ejemplo de Córdoba, podés cambiarlo por el real)
+    const whatsappUrl = `https://wa.me/5493510000000?text=${encodedMessage}`;
+    
+    // Abrir WhatsApp en pestaña nueva
+    window.open(whatsappUrl, '_blank');
+
     setStep('success');
   };
 
@@ -66,6 +124,7 @@ export default function App() {
     setPhone('');
     setName('');
     setSelectedTime(null);
+    setIsReturningUser(false);
   };
 
   return (
@@ -190,7 +249,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* MOTOR DE RESERVAS SECUENCIAL (PASO A PASO) */}
+      {/* MOTOR DE RESERVAS INTELIGENTE */}
       <section id="reservas" className="bg-slate-900 py-24 text-white relative">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-12">
@@ -198,12 +257,12 @@ export default function App() {
               Sistema Online 24/7
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">Gestión de Turnos</h2>
-            <p className="text-slate-400">Completá tus datos para acceder a la disponibilidad de canchas.</p>
+            <p className="text-slate-400">Identificate con tu teléfono y reservá tu cancha al instante.</p>
           </div>
 
           <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
             
-            {/* PASO 1: NÚMERO DE TELÉFONO */}
+            {/* PASO 1: TELÉFONO */}
             {step === 'phone' && (
               <form onSubmit={handlePhoneSubmit} className="space-y-6 animate-fade-in">
                 <div className="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -214,7 +273,7 @@ export default function App() {
                   <label className="block text-sm font-bold text-slate-300 flex items-center gap-2">
                     <Phone className="w-4 h-4 text-emerald-400" /> Ingresá tu número de Teléfono / WhatsApp
                   </label>
-                  <p className="text-xs text-slate-400">Lo utilizaremos para enviarte la confirmación y recordatorio de tu turno.</p>
+                  <p className="text-xs text-slate-400">Si ya reservaste antes, recordaremos tus datos automáticamente.</p>
                 </div>
                 <input
                   type="tel"
@@ -234,7 +293,7 @@ export default function App() {
               </form>
             )}
 
-            {/* PASO 2: DATOS PERSONALES Y DEPORTE */}
+            {/* PASO 2: NOMBRE (Solo si es cliente nuevo) */}
             {step === 'details' && (
               <form onSubmit={handleDetailsSubmit} className="space-y-6 animate-fade-in">
                 <div className="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -245,16 +304,17 @@ export default function App() {
                   >
                     <ChevronLeft className="w-4 h-4" /> Volver
                   </button>
-                  <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">Paso 2 de 3</span>
+                  <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">Paso 2 de 3 • Cliente Nuevo</span>
                 </div>
 
                 <div className="space-y-2">
                   <label className="block text-sm font-bold text-slate-300 flex items-center gap-2">
                     <User className="w-4 h-4 text-emerald-400" /> Nombre y Apellido
                   </label>
+                  <p className="text-xs text-slate-400">Quedará guardado para tus próximas reservas.</p>
                   <input
                     type="text"
-                    placeholder="Ej: Carlos Tevez"
+                    placeholder="Ej: Lionel Messi"
                     required
                     autoFocus
                     value={name}
@@ -263,12 +323,39 @@ export default function App() {
                   />
                 </div>
 
-                <div className="space-y-2 pt-2">
-                  <label className="block text-sm font-bold text-slate-300">Seleccioná la Disciplina</label>
+                <button
+                  type="submit"
+                  className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 flex items-center justify-center gap-2 cursor-pointer"
+                >
+                  Continuar al Calendario <ArrowRight className="w-5 h-5" />
+                </button>
+              </form>
+            )}
+
+            {/* PASO 3: CALENDARIO, DISCIPLINA Y HORARIOS */}
+            {step === 'booking' && (
+              <div className="space-y-8 animate-fade-in">
+                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
+                  <button 
+                    type="button" 
+                    onClick={() => setStep('phone')} 
+                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer"
+                  >
+                    <ChevronLeft className="w-4 h-4" /> Cambiar número
+                  </button>
+                  <div className="text-right">
+                    <span className="text-xs font-black uppercase text-emerald-400 tracking-wider block">Paso 3 de 3</span>
+                    <span className="text-xs text-slate-300 font-bold">¡Hola, {name}! {isReturningUser && '(Datos recuperados ⚡)'}</span>
+                  </div>
+                </div>
+
+                {/* Disciplina */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">1. Seleccioná la Disciplina</label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
-                      onClick={() => setSelectedSport('padel')}
+                      onClick={() => { setSelectedSport('padel'); setSelectedTime(null); }}
                       className={`py-3.5 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
                         selectedSport === 'padel'
                           ? 'bg-emerald-400 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-400/20'
@@ -279,7 +366,7 @@ export default function App() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setSelectedSport('futbol')}
+                      onClick={() => { setSelectedSport('futbol'); setSelectedTime(null); }}
                       className={`py-3.5 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
                         selectedSport === 'futbol'
                           ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20'
@@ -291,33 +378,10 @@ export default function App() {
                   </div>
                 </div>
 
-                <button
-                  type="submit"
-                  className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  Ver Canchas y Horarios Disponibles <ArrowRight className="w-5 h-5" />
-                </button>
-              </form>
-            )}
-
-            {/* PASO 3: CALENDARIO Y HORARIOS */}
-            {step === 'booking' && (
-              <div className="space-y-8 animate-fade-in">
-                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                  <button 
-                    type="button" 
-                    onClick={() => setStep('details')} 
-                    className="text-xs text-slate-400 hover:text-white flex items-center gap-1 font-bold cursor-pointer"
-                  >
-                    <ChevronLeft className="w-4 h-4" /> Cambiar datos
-                  </button>
-                  <span className="text-xs font-black uppercase text-emerald-400 tracking-wider">Paso 3 de 3 • Hola, {name}</span>
-                </div>
-
                 {/* Selección de Día */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-emerald-400" /> Seleccioná el Día
+                    <Calendar className="w-4 h-4 text-emerald-400" /> 2. Seleccioná el Día
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     {availableDays.map((day) => (
@@ -341,7 +405,7 @@ export default function App() {
                 {/* Selección de Horario */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-emerald-400" /> Horarios para {selectedSport === 'padel' ? 'Pádel Pro' : 'Fútbol 7'}
+                    <Clock className="w-4 h-4 text-emerald-400" /> 3. Horarios Disponibles
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {hours.map((h, idx) => (
@@ -351,7 +415,7 @@ export default function App() {
                         onClick={() => setSelectedTime(h.time)}
                         className={`p-3.5 rounded-2xl border text-center transition flex flex-col items-center justify-center relative overflow-hidden ${
                           !h.available
-                            ? 'bg-slate-900/30 border-slate-900 text-slate-600 cursor-not-allowed opacity-40'
+                            ? 'bg-slate-950/60 border-slate-900 text-slate-600 cursor-not-allowed opacity-50'
                             : selectedTime === h.time
                             ? 'bg-emerald-400 text-slate-950 border-emerald-400 font-black shadow-lg shadow-emerald-400/20 scale-[1.02]'
                             : 'bg-slate-900 border-slate-800 text-slate-300 hover:border-emerald-500/50 cursor-pointer'
@@ -359,25 +423,23 @@ export default function App() {
                       >
                         <span className="text-base font-black">{h.time}</span>
                         <span className="text-xs opacity-90 mt-0.5 font-bold">{h.available ? h.price : 'Ocupado'}</span>
-                        {h.available && (
-                          <span className="absolute top-1 right-2 text-[8px] font-extrabold uppercase px-1 py-0.5 rounded bg-emerald-500/20 text-emerald-300">
-                            {h.tag}
-                          </span>
-                        )}
+                        <span className={`absolute top-1 right-2 text-[8px] font-extrabold uppercase px-1 py-0.5 rounded ${h.available ? 'bg-emerald-500/20 text-emerald-300' : 'bg-red-500/20 text-red-400'}`}>
+                          {h.tag}
+                        </span>
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* BOTÓN FINAL DE CONFIRMACIÓN */}
+                {/* BOTÓN FINAL */}
                 {selectedTime && (
                   <div className="pt-4 border-t border-slate-800 animate-fade-in">
                     <button
                       type="button"
                       onClick={handleFinalBooking}
-                      className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full bg-emerald-500 hover:bg-emerald-400 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-500/20 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      Confirmar Turno ({selectedTime} hs) 🚀
+                      <MessageSquare className="w-5 h-5" /> Confirmar y Enviar WhatsApp ({selectedTime} hs) 🚀
                     </button>
                   </div>
                 )}
@@ -391,9 +453,9 @@ export default function App() {
                   ✓
                 </div>
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-black text-white">¡Reserva Exitosa, {name}!</h3>
+                  <h3 className="text-2xl font-black text-white">¡Turno Reservado con Éxito!</h3>
                   <p className="text-slate-400 text-sm max-w-md mx-auto">
-                    Guardamos tu turno de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> para el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. Te enviamos el comprobante a <span className="text-white font-bold">{phone}</span>.
+                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp con el mensaje de confirmación para tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. ¡El turno ya figura como ocupado!
                   </p>
                 </div>
                 <button
