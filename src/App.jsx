@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle } from 'lucide-react';
+import padelImg from './padel.png';
+import futbolImg from './futbol.png';
 
 export default function App() {
-  // Pasos: 'phone' -> 'details' -> 'booking' -> 'success'
   const [step, setStep] = useState('phone');
-  
-  // Datos del cliente y reserva
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
   const [selectedSport, setSelectedSport] = useState('padel');
@@ -13,18 +12,15 @@ export default function App() {
   const [selectedTime, setSelectedTime] = useState(null);
   const [isReturningUser, setIsReturningUser] = useState(false);
 
-  // Base de datos de turnos ocupados por día/deporte/hora (guardada en localStorage)
   const [bookedSlots, setBookedSlots] = useState(() => {
     const saved = localStorage.getItem('lescourts_booked_slots');
     return saved ? JSON.parse(saved) : {};
   });
 
-  // Guardar turnos ocupados cada vez que cambien
   useEffect(() => {
     localStorage.setItem('lescourts_booked_slots', JSON.stringify(bookedSlots));
   }, [bookedSlots]);
 
-  // Generar próximos 5 días dinámicamente
   const getNextDays = () => {
     const days = [];
     for (let i = 0; i < 5; i++) {
@@ -42,7 +38,6 @@ export default function App() {
 
   const availableDays = getNextDays();
 
-  // Horarios base según deporte
   const baseHours = selectedSport === 'padel' ? [
     { time: '17:00', price: '$18.000', tag: 'Popular' },
     { time: '18:30', price: '$20.000', tag: 'Libre' },
@@ -56,7 +51,6 @@ export default function App() {
     { time: '22:30', price: '$38.000', tag: 'Promo' },
   ];
 
-  // Verificar si un horario está ocupado para el día y deporte actual
   const currentFullDate = availableDays[selectedDay].fullDate;
   const hours = baseHours.map(h => {
     const slotKey = `${selectedSport}_${currentFullDate}_${h.time}`;
@@ -68,7 +62,6 @@ export default function App() {
     };
   });
 
-  // PASO 1: Validar teléfono y buscar si ya existe el cliente en localStorage
   const handlePhoneSubmit = (e) => {
     e.preventDefault();
     if (!phone || phone.length < 6) return;
@@ -84,7 +77,6 @@ export default function App() {
     }
   };
 
-  // PASO 2: Guardar nuevo cliente y avanzar
   const handleDetailsSubmit = (e) => {
     e.preventDefault();
     if (!name.trim()) return;
@@ -96,7 +88,6 @@ export default function App() {
     setStep('booking');
   };
 
-  // PASO 3: Confirmar reserva, bloquear turno y abrir WhatsApp hacia Les Courts (+5493513988422)
   const handleFinalBooking = () => {
     if (!selectedTime) return;
 
@@ -192,7 +183,7 @@ export default function App() {
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-white rounded-t-[40px] md:rounded-t-[60px]" />
       </section>
 
-      {/* SECCIÓN DE CANCHAS CON FOTOS REALES (USANDO RUTA PÚBLICA) */}
+      {/* SECCIÓN DE CANCHAS CON FOTOS REALES */}
       <section id="servicios" className="bg-white py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-3 mb-12 text-center sm:text-left">
@@ -211,13 +202,13 @@ export default function App() {
             
             {/* TARJETA PÁDEL */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
-              <div className="relative h-72 overflow-hidden bg-slate-950">
+              <div className="relative h-80 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
-                  src="./Padel.PNG" 
+                  src={padelImg} 
                   alt="Cancha de Pádel Real Les Courts" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
-                <div className="absolute top-4 left-4 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md">
+                <div className="absolute top-4 left-4 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md z-10">
                   Pádel Pro
                 </div>
               </div>
@@ -239,13 +230,13 @@ export default function App() {
 
             {/* TARJETA FÚTBOL 7 */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
-              <div className="relative h-72 overflow-hidden bg-slate-950">
+              <div className="relative h-80 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
-                  src="./Futbol.PNG" 
+                  src={futbolImg} 
                   alt="Cancha de Fútbol 7 Real Les Courts" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
-                <div className="absolute top-4 left-4 bg-blue-600 text-white font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md">
+                <div className="absolute top-4 left-4 bg-blue-600 text-white font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md z-10">
                   Fútbol 7
                 </div>
               </div>
