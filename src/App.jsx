@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle, MapPin, Wrench } from 'lucide-react';
+import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle, MapPin } from 'lucide-react';
 
 export default function App() {
   const [step, setStep] = useState('phone');
+  
+  // Datos del cliente y reserva
   const [phone, setPhone] = useState('');
   const [name, setName] = useState('');
-  const [selectedSport, setSelectedSport] = useState('padel');
+  const [selectedSede, setSelectedSede] = useState('belgrano'); // 'belgrano' o 'rivera'
+  const [selectedSport, setSelectedSport] = useState('padel'); // 'tenis', 'padel', 'squash', 'futbol'
   const [selectedDay, setSelectedDay] = useState(0);
   const [selectedTime, setSelectedTime] = useState(null);
   const [isReturningUser, setIsReturningUser] = useState(false);
 
+  // Base de datos de turnos ocupados por sede/deporte/día/hora (guardada en localStorage)
   const [bookedSlots, setBookedSlots] = useState(() => {
     const saved = localStorage.getItem('lescourts_booked_slots');
     return saved ? JSON.parse(saved) : {};
@@ -18,6 +22,32 @@ export default function App() {
   useEffect(() => {
     localStorage.setItem('lescourts_booked_slots', JSON.stringify(bookedSlots));
   }, [bookedSlots]);
+
+  // Definir deportes disponibles según la sede elegida
+  const getSportsForSede = (sede) => {
+    if (sede === 'belgrano') {
+      return [
+        { id: 'padel', name: '🎾 Pádel Pro' },
+        { id: 'tenis', name: '🎾 Tenis' },
+        { id: 'squash', name: '🎾 Squash' },
+      ];
+    } else {
+      return [
+        { id: 'padel', name: '🎾 Pádel Pro' },
+        { id: 'futbol', name: '⚽ Fútbol 7' },
+      ];
+    }
+  };
+
+  // Si cambia la sede, asegurarnos de que el deporte seleccionado sea válido para esa sede
+  const handleSedeChange = (sedeId) => {
+    setSelectedSede(sedeId);
+    setSelectedTime(null);
+    const validSports = getSportsForSede(sedeId);
+    if (!validSports.some(s => s.id === selectedSport)) {
+      setSelectedSport(validSports[0].id);
+    }
+  };
 
   const getNextDays = () => {
     const days = [];
@@ -36,22 +66,44 @@ export default function App() {
 
   const availableDays = getNextDays();
 
-  const baseHours = selectedSport === 'padel' ? [
-    { time: '17:00', price: '$18.000', tag: 'Popular' },
-    { time: '18:30', price: '$20.000', tag: 'Libre' },
-    { time: '20:00', price: '$22.000', tag: '¡Estelar!' },
-    { time: '21:30', price: '$22.000', tag: 'Último' },
-    { time: '23:00', price: '$19.000', tag: 'Promo' },
-  ] : [
-    { time: '18:00', price: '$35.000', tag: 'Popular' },
-    { time: '19:30', price: '$40.000', tag: '¡Estelar!' },
-    { time: '21:00', price: '$40.000', tag: 'Libre' },
-    { time: '22:30', price: '$38.000', tag: 'Promo' },
-  ];
+  // Horarios y precios según el deporte
+  const getHoursForSport = (sport) => {
+    if (sport === 'futbol') {
+      return [
+        { time: '18:00', price: '$35.000', tag: 'Popular' },
+        { time: '19:30', price: '$40.000', tag: '¡Estelar!' },
+        { time: '21:00', price: '$40.000', tag: 'Libre' },
+        { time: '22:30', price: '$38.000', tag: 'Promo' },
+      ];
+    } else if (sport === 'tenis') {
+      return [
+        { time: '17:00', price: '$15.000', tag: 'Popular' },
+        { time: '18:30', price: '$18.000', tag: 'Libre' },
+        { time: '20:00', price: '$20.000', tag: '¡Estelar!' },
+      ];
+    } else if (sport === 'squash') {
+      return [
+        { time: '17:30', price: '$12.000', tag: 'Popular' },
+        { time: '19:00', price: '$14.000', tag: 'Libre' },
+        { time: '20:30', price: '$16.000', tag: '¡Estelar!' },
+      ];
+    } else {
+      // Pádel
+      return [
+        { time: '17:00', price: '$18.000', tag: 'Popular' },
+        { time: '18:30', price: '$20.000', tag: 'Libre' },
+        { time: '20:00', price: '$22.000', tag: '¡Estelar!' },
+        { time: '21:30', price: '$22.000', tag: 'Último' },
+        { time: '23:00', price: '$19.000', tag: 'Promo' },
+      ];
+    }
+  };
 
+  const baseHours = getHoursForSport(selectedSport);
   const currentFullDate = availableDays[selectedDay].fullDate;
+  
   const hours = baseHours.map(h => {
-    const slotKey = `${selectedSport}_${currentFullDate}_${h.time}`;
+    const slotKey = `${selectedSede}_${selectedSport}_${currentFullDate}_${h.time}`;
     const isBooked = bookedSlots[slotKey] || false;
     return {
       ...h,
@@ -89,12 +141,14 @@ export default function App() {
   const handleFinalBooking = () => {
     if (!selectedTime) return;
 
-    const slotKey = `${selectedSport}_${currentFullDate}_${selectedTime}`;
+    const slotKey = `${selectedSede}_${selectedSport}_${currentFullDate}_${selectedTime}`;
     setBookedSlots(prev => ({ ...prev, [slotKey]: true }));
 
     const dateLabel = availableDays[selectedDay].dateNum;
-    const sportName = selectedSport === 'padel' ? 'Pádel Pro' : 'Fútbol 7';
-    const message = `¡Hola Les Courts! 🎾⚽ Vengo a confirmar mi reserva.\n\n👤 *Cliente:* ${name}\n📱 *Teléfono:* ${phone}\n🏆 *Deporte:* ${sportName}\n📅 *Día:* ${dateLabel}\n⏰ *Horario:* ${selectedTime} hs\n\nQuedo atento para coordinar el envío de la seña y asegurar mi turno. ¡Gracias!`;
+    const sedeName = selectedSede === 'belgrano' ? 'Villa Belgrano (Av. Laplace 550)' : 'Rivera Indarte (Av. Boderau 7700)';
+    const sportName = selectedSport === 'padel' ? 'Pádel Pro' : selectedSport === 'futbol' ? 'Fútbol 7' : selectedSport === 'tenis' ? 'Tenis' : 'Squash';
+    
+    const message = `¡Hola Les Courts! 🎾⚽ Vengo a confirmar mi reserva.\n\n📍 *Sede:* ${sedeName}\n👤 *Cliente:* ${name}\n📱 *Teléfono:* ${phone}\n🏆 *Deporte:* ${sportName}\n📅 *Día:* ${dateLabel}\n⏰ *Horario:* ${selectedTime} hs\n\nQuedo atento para coordinar el envío de la seña y asegurar mi turno. ¡Gracias!`;
     const encodedMessage = encodeURIComponent(message);
     
     const whatsappUrl = `https://wa.me/5493513988422?text=${encodedMessage}`;
@@ -127,7 +181,6 @@ export default function App() {
             <a href="#inicio" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Inicio</a>
             <a href="#sedes" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Sedes</a>
             <a href="#servicios" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Canchas</a>
-            <a href="#construccion" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Construcción</a>
             <a href="#reservas" className="px-4 py-1.5 rounded-full hover:bg-white/10 transition">Reservas</a>
           </nav>
 
@@ -150,7 +203,7 @@ export default function App() {
         <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 py-20 flex flex-col items-center">
           
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2 rounded-full text-xs font-bold text-emerald-400 tracking-wide uppercase">
-            Fútbol 7 & Pádel Pro • Córdoba
+            Complejo Deportivo • Córdoba
           </div>
 
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
@@ -161,7 +214,7 @@ export default function App() {
           </h1>
 
           <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-medium">
-            Viví la mejor experiencia deportiva con canchas de primer nivel, iluminación LED profesional y el mejor tercer tiempo.
+            Viví la mejor experiencia deportiva con canchas de primer nivel en nuestras dos sedes exclusivas.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
@@ -191,10 +244,10 @@ export default function App() {
               UBICACIONES
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
-              NUESTRAS SEDES EN CÓRDOBA
+              NUESTRAS DOS SEDES EN CÓRDOBA
             </h2>
             <p className="text-slate-600 max-w-xl">
-              Elegí la sede que te quede más cómoda y vení a disfrutar del mejor deporte.
+              Elegí la sede que te quede más cómoda y descubrí su oferta deportiva.
             </p>
           </div>
 
@@ -209,11 +262,11 @@ export default function App() {
                 <h3 className="text-2xl font-black text-slate-900">Villa Belgrano</h3>
                 <p className="text-slate-600 font-bold text-sm">Av. Laplace 550, Córdoba</p>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Cuenta con <strong className="text-slate-900">4 canchas de pádel rápidas de blindex o muro</strong>, excelente iluminación y estacionamiento exclusivo.
+                  Cuenta con <strong className="text-slate-900">4 canchas de pádel rápidas de blindex o muro</strong>, además de canchas de <strong className="text-slate-900">tenis y squash</strong>.
                 </p>
               </div>
               <div className="pt-6 mt-6 border-t border-slate-200">
-                <a href="#reservas" className="text-emerald-600 font-black text-sm hover:underline flex items-center gap-1">
+                <a href="#reservas" onClick={() => handleSedeChange('belgrano')} className="text-emerald-600 font-black text-sm hover:underline flex items-center gap-1">
                   Reservar en Villa Belgrano →
                 </a>
               </div>
@@ -228,11 +281,11 @@ export default function App() {
                 <h3 className="text-2xl font-black text-slate-900">Rivera Indarte</h3>
                 <p className="text-slate-600 font-bold text-sm">Av. Boderau 7700, Córdoba</p>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Cuenta con <strong className="text-slate-900">4 canchas de pádel rápidas de blindex</strong> de última generación, bar y comodidad total.
+                  Cuenta con <strong className="text-slate-900">4 canchas de pádel rápidas de blindex</strong> y canchas de <strong className="text-slate-900">fútbol 7</strong> de césped sintético.
                 </p>
               </div>
               <div className="pt-6 mt-6 border-t border-slate-200">
-                <a href="#reservas" className="text-blue-600 font-black text-sm hover:underline flex items-center gap-1">
+                <a href="#reservas" onClick={() => handleSedeChange('rivera')} className="text-blue-600 font-black text-sm hover:underline flex items-center gap-1">
                   Reservar en Rivera Indarte →
                 </a>
               </div>
@@ -242,15 +295,15 @@ export default function App() {
         </div>
       </section>
 
-      {/* SECCIÓN CANCHAS */}
+      {/* SECCIÓN INSTALACIONES */}
       <section id="servicios" className="bg-slate-100 py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-3 mb-12 text-center sm:text-left">
             <span className="text-emerald-600 font-extrabold tracking-wider uppercase text-xs">
-              INSTALACIONES
+              DEPORTES
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-slate-900">
-              NUESTRAS CANCHAS
+              DISCIPLINAS DISPONIBLES
             </h2>
             <p className="text-slate-600 max-w-xl">
               Superficies de primer nivel listas para tu próximo partido.
@@ -264,7 +317,7 @@ export default function App() {
               <div className="relative h-72 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
                   src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&q=80&w=1000" 
-                  alt="Cancha de Pádel Real Les Courts" 
+                  alt="Cancha de Pádel Les Courts" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
                 <div className="absolute top-4 left-4 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md z-10">
@@ -273,13 +326,13 @@ export default function App() {
               </div>
               <div className="p-8 flex flex-col justify-between flex-grow space-y-4">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900 mb-2">Canchas de Pádel Les Courts</h3>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">Pádel (Ambas Sedes)</h3>
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    Estructura vidriada, iluminación nocturna óptima y el mejor ambiente competitivo de Córdoba en ambas sedes.
+                    Disponibles en Villa Belgrano (blindex o muro) y Rivera Indarte (blindex). Iluminación LED y máxima comodidad.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase">Blindex o Muro</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase">Villa Belgrano & Rivera</span>
                   <a href="#reservas" className="text-emerald-600 font-extrabold text-sm hover:underline flex items-center gap-1">
                     Reservar Pádel →
                   </a>
@@ -287,29 +340,29 @@ export default function App() {
               </div>
             </div>
 
-            {/* TARJETA FÚTBOL 7 */}
+            {/* TARJETA FÚTBOL Y OTROS */}
             <div className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
               <div className="relative h-72 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
                   src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1000" 
-                  alt="Cancha de Fútbol 7 Real Les Courts" 
+                  alt="Cancha de Fútbol 7 Les Courts" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
                 <div className="absolute top-4 left-4 bg-blue-600 text-white font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md z-10">
-                  Fútbol 7
+                  Fútbol, Tenis & Squash
                 </div>
               </div>
               <div className="p-8 flex flex-col justify-between flex-grow space-y-4">
                 <div>
-                  <h3 className="text-2xl font-black text-slate-900 mb-2">Canchas de Fútbol 7 Les Courts</h3>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">Fútbol 7, Tenis y Squash</h3>
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    Césped sintético impecable y dimensiones ideales para armar partidazos con amigos y vivir el tercer tiempo.
+                    Fútbol 7 en Rivera Indarte. Tenis y Squash en Villa Belgrano. Instalaciones preparadas para exigencia profesional.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase">Sintético Pro</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase">Variedad Deportiva</span>
                   <a href="#reservas" className="text-blue-600 font-extrabold text-sm hover:underline flex items-center gap-1">
-                    Reservar Fútbol →
+                    Reservar Turno →
                   </a>
                 </div>
               </div>
@@ -319,58 +372,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* SECCIÓN SERVICIO DE CONSTRUCCIÓN */}
-      <section id="construccion" className="bg-slate-950 py-20 text-white relative border-t border-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-6">
-              <span className="text-emerald-400 font-extrabold tracking-wider uppercase text-xs bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
-                Unidad de Ingeniería y Obra
-              </span>
-              <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">
-                Servicio de Construcción de Canchas Profesionales
-              </h2>
-              <p className="text-slate-300 text-base leading-relaxed">
-                Llevamos toda nuestra experiencia en complejos deportivos directamente a tu proyecto. Ofrecemos diseño, ejecución y construcción integral llave en mano para superficies de alta competencia:
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
-                <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-center space-y-2">
-                  <span className="text-2xl">🎾</span>
-                  <h4 className="font-black text-white text-sm">Canchas de Tenis</h4>
-                </div>
-                <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-center space-y-2">
-                  <span className="text-2xl">⚡</span>
-                  <h4 className="font-black text-white text-sm">Canchas de Pádel</h4>
-                </div>
-                <div className="bg-slate-900 border border-slate-800 p-5 rounded-2xl text-center space-y-2">
-                  <span className="text-2xl">⚽</span>
-                  <h4 className="font-black text-white text-sm">Canchas de Fútbol</h4>
-                </div>
-              </div>
-              <div className="pt-4">
-                <a
-                  href="https://wa.me/5493513988422?text=¡Hola%20Les%20Courts!%20Me%20interesa%20consultar%20sobre%20el%20servicio%20de%20construcción%20de%20canchas."
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center gap-2 bg-emerald-400 hover:bg-emerald-300 text-slate-950 px-8 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 cursor-pointer"
-                >
-                  <Wrench className="w-5 h-5" /> Consultar por construcción de canchas
-                </a>
-              </div>
-            </div>
-            <div className="relative rounded-3xl overflow-hidden shadow-2xl border border-slate-800 h-96">
-              <img 
-                src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&q=80&w=1000" 
-                alt="Construcción de canchas" 
-                className="w-full h-full object-cover opacity-80"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* MOTOR DE RESERVAS INTELIGENTE */}
+      {/* MOTOR DE RESERVAS INTELIGENTE POR SEDE */}
       <section id="reservas" className="bg-slate-900 py-24 text-white relative">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-12">
@@ -378,7 +380,7 @@ export default function App() {
               Sistema Online 24/7
             </span>
             <h2 className="text-3xl sm:text-5xl font-black tracking-tight text-white">Gestión de Turnos</h2>
-            <p className="text-slate-400">Identificate con tu teléfono y reservá tu cancha al instante.</p>
+            <p className="text-slate-400">Elegí tu sede, identificate y reservá tu cancha al instante.</p>
           </div>
 
           <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl relative overflow-hidden">
@@ -448,12 +450,12 @@ export default function App() {
                   type="submit"
                   className="w-full bg-emerald-400 hover:bg-emerald-300 text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-emerald-400/20 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  Continuar al Calendario <ArrowRight className="w-5 h-5" />
+                  Continuar a la Reserva <ArrowRight className="w-5 h-5" />
                 </button>
               </form>
             )}
 
-            {/* PASO 3: CALENDARIO, DISCIPLINA Y HORARIOS */}
+            {/* PASO 3: SEDE, DISCIPLINA, CALENDARIO Y HORARIOS */}
             {step === 'booking' && (
               <div className="space-y-8 animate-fade-in">
                 <div className="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -470,39 +472,64 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Disciplina */}
+                {/* 1. SELECCIÓN DE SEDE */}
                 <div className="space-y-2">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">1. Seleccioná la Disciplina</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-400" /> 1. Seleccioná la Sede
+                  </label>
                   <div className="grid grid-cols-2 gap-4">
                     <button
                       type="button"
-                      onClick={() => { setSelectedSport('padel'); setSelectedTime(null); }}
-                      className={`py-3.5 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
-                        selectedSport === 'padel'
+                      onClick={() => handleSedeChange('belgrano')}
+                      className={`py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm border transition flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                        selectedSede === 'belgrano'
                           ? 'bg-emerald-400 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-400/20'
                           : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
                       }`}
                     >
-                      🎾 Pádel Pro
+                      <span>📍 Villa Belgrano</span>
+                      <span className="text-[10px] font-medium opacity-75">Av. Laplace 550</span>
                     </button>
                     <button
                       type="button"
-                      onClick={() => { setSelectedSport('futbol'); setSelectedTime(null); }}
-                      className={`py-3.5 rounded-2xl font-black text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
-                        selectedSport === 'futbol'
+                      onClick={() => handleSedeChange('rivera')}
+                      className={`py-3.5 px-4 rounded-2xl font-black text-xs sm:text-sm border transition flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                        selectedSede === 'rivera'
                           ? 'bg-blue-500 text-white border-blue-500 shadow-lg shadow-blue-500/20'
                           : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
                       }`}
                     >
-                      ⚽ Fútbol 7
+                      <span>📍 Rivera Indarte</span>
+                      <span className="text-[10px] font-medium opacity-75">Av. Boderau 7700</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Selección de Día */}
+                {/* 2. SELECCIÓN DE DISCIPLINA (Filtrada por Sede) */}
+                <div className="space-y-2">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-400">2. Seleccioná el Deporte</label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    {getSportsForSede(selectedSede).map((sport) => (
+                      <button
+                        key={sport.id}
+                        type="button"
+                        onClick={() => { setSelectedSport(sport.id); setSelectedTime(null); }}
+                        className={`py-3.5 px-3 rounded-2xl font-black text-xs sm:text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
+                          selectedSport === sport.id
+                            ? 'bg-emerald-400 text-slate-950 border-emerald-400 shadow-lg shadow-emerald-400/20'
+                            : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
+                        }`}
+                      >
+                        {sport.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 3. SELECCIÓN DE DÍA */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-emerald-400" /> 2. Seleccioná el Día
+                    <Calendar className="w-4 h-4 text-emerald-400" /> 3. Seleccioná el Día
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                     {availableDays.map((day) => (
@@ -523,10 +550,10 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Selección de Horario */}
+                {/* 4. SELECCIÓN DE HORARIO */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-emerald-400" /> 3. Horarios Disponibles
+                    <Clock className="w-4 h-4 text-emerald-400" /> 4. Horarios Disponibles
                   </label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {hours.map((h, idx) => (
@@ -585,7 +612,7 @@ export default function App() {
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-white">¡Turno Reservado con Éxito!</h3>
                   <p className="text-slate-400 text-sm max-w-md mx-auto">
-                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp para enviar la confirmación a Les Courts (<span className="text-emerald-400 font-bold">+54 9 351 398-8422</span>) para tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. ¡Recordá coordinar la seña para asegurar tu lugar!
+                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp para enviar la confirmación a la sede <span className="text-white font-bold">{selectedSede === 'belgrano' ? 'Villa Belgrano' : 'Rivera Indarte'}</span> para tu cancha de <span className="text-emerald-400 uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-emerald-400 font-bold">{selectedTime} hs</span>. ¡Recordá coordinar la seña para asegurar tu lugar!
                   </p>
                 </div>
                 <button
