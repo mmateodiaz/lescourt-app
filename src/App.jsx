@@ -295,7 +295,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* SECCIÓN INSTALACIONES */}
+      {/* SECCIÓN INSTALACIONES (CON FOTOS CORRECTAS DE PÁDEL Y CÉSPED SINTÉTICO) */}
       <section id="servicios" className="bg-slate-100 py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-3 mb-12 text-center sm:text-left">
@@ -312,12 +312,12 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* TARJETA PÁDEL */}
+            {/* TARJETA PÁDEL (FOTO REAL DE PÁDEL) */}
             <div className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
               <div className="relative h-72 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&q=80&w=1000" 
-                  alt="Cancha de Pádel Les Courts" 
+                  src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&q=80&w=1000" 
+                  alt="Cancha de Pádel Pro" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
                 <div className="absolute top-4 left-4 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md z-10">
@@ -332,7 +332,7 @@ export default function App() {
                   </p>
                 </div>
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase">Villa Belgrano & Rivera</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase">Blindex o Muro</span>
                   <a href="#reservas" className="text-emerald-600 font-extrabold text-sm hover:underline flex items-center gap-1">
                     Reservar Pádel →
                   </a>
@@ -340,27 +340,27 @@ export default function App() {
               </div>
             </div>
 
-            {/* TARJETA FÚTBOL Y OTROS */}
+            {/* TARJETA FÚTBOL 7 (FOTO CLARA DE CÉSPED SINTÉTICO) */}
             <div className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
               <div className="relative h-72 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1000" 
-                  alt="Cancha de Fútbol 7 Les Courts" 
+                  src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=1000" 
+                  alt="Cancha de Fútbol Césped Sintético" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
                 <div className="absolute top-4 left-4 bg-blue-600 text-white font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md z-10">
-                  Fútbol, Tenis & Squash
+                  Fútbol 7 & Otros
                 </div>
               </div>
               <div className="p-8 flex flex-col justify-between flex-grow space-y-4">
                 <div>
                   <h3 className="text-2xl font-black text-slate-900 mb-2">Fútbol 7, Tenis y Squash</h3>
                   <p className="text-slate-600 text-sm leading-relaxed">
-                    Fútbol 7 en Rivera Indarte. Tenis y Squash en Villa Belgrano. Instalaciones preparadas para exigencia profesional.
+                    Fútbol 7 con césped sintético de alta gama en Rivera Indarte. Tenis y Squash en Villa Belgrano.
                   </p>
                 </div>
                 <div className="pt-4 border-t border-slate-200 flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-500 uppercase">Variedad Deportiva</span>
+                  <span className="text-xs font-bold text-slate-500 uppercase">Césped Sintético Pro</span>
                   <a href="#reservas" className="text-blue-600 font-extrabold text-sm hover:underline flex items-center gap-1">
                     Reservar Turno →
                   </a>
