@@ -136,7 +136,7 @@ export default function App() {
                 </div>
                 <h3 className="text-xl font-black text-slate-900">Comodidades Pro</h3>
                 <p className="text-slate-600 text-sm leading-relaxed">
-                  Estacionamiento privado dentro del predio, vestuarios amplios con agua caliente individual y seguridad permanente.
+                  Estacionamiento privado dentro del predio, baños y seguridad permanente.
                 </p>
               </div>
             </div>
@@ -170,7 +170,7 @@ export default function App() {
                           : 'bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700'
                       }`}
                     >
-                      🎾 Pádel Pro
+                      🎾 Pádel 
                     </button>
                     <button
                       type="button"
