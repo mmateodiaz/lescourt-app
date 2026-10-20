@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle } from 'lucide-react';
-import padelImg from './Padel.PNG';
-import futbolImg from './Futbol.PNG';
 
 export default function App() {
   // Pasos: 'phone' -> 'details' -> 'booking' -> 'success'
@@ -194,7 +192,7 @@ export default function App() {
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-white rounded-t-[40px] md:rounded-t-[60px]" />
       </section>
 
-      {/* SECCIÓN DE CANCHAS CON FOTOS REALES */}
+      {/* SECCIÓN DE CANCHAS CON FOTOS REALES (USANDO RUTA PÚBLICA) */}
       <section id="servicios" className="bg-white py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-3 mb-12 text-center sm:text-left">
@@ -211,11 +209,11 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* TARJETA PÁDEL (FOTO REAL) */}
+            {/* TARJETA PÁDEL */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
               <div className="relative h-72 overflow-hidden bg-slate-950">
                 <img 
-                  src={padelImg} 
+                  src="./Padel.PNG" 
                   alt="Cancha de Pádel Real Les Courts" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
@@ -239,11 +237,11 @@ export default function App() {
               </div>
             </div>
 
-            {/* TARJETA FÚTBOL 7 (FOTO REAL) */}
+            {/* TARJETA FÚTBOL 7 */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
               <div className="relative h-72 overflow-hidden bg-slate-950">
                 <img 
-                  src={futbolImg} 
+                  src="./Futbol.PNG" 
                   alt="Cancha de Fútbol 7 Real Les Courts" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
