@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { ArrowRight, Trophy, Shield, Coffee, Calendar, Clock, CheckCircle2, Phone, User, ChevronLeft, MessageSquare, AlertCircle } from 'lucide-react';
-import padelImg from './padel.png';
-import futbolImg from './futbol.png';
 
 export default function App() {
   const [step, setStep] = useState('phone');
@@ -183,7 +181,7 @@ export default function App() {
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-white rounded-t-[40px] md:rounded-t-[60px]" />
       </section>
 
-      {/* SECCIÓN DE CANCHAS CON FOTOS REALES */}
+      {/* SECCIÓN DE CANCHAS */}
       <section id="servicios" className="bg-white py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-3 mb-12 text-center sm:text-left">
@@ -204,7 +202,7 @@ export default function App() {
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
               <div className="relative h-80 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
-                  src={padelImg} 
+                  src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&q=80&w=1000" 
                   alt="Cancha de Pádel Real Les Courts" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
@@ -232,7 +230,7 @@ export default function App() {
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
               <div className="relative h-80 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
-                  src={futbolImg} 
+                  src="https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&q=80&w=1000" 
                   alt="Cancha de Fútbol 7 Real Les Courts" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
