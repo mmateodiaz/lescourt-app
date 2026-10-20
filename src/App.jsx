@@ -295,7 +295,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* SECCIÓN INSTALACIONES (CON FOTOS CORRECTAS DE PÁDEL Y CÉSPED SINTÉTICO) */}
+      {/* SECCIÓN INSTALACIONES (FOTOS REALES Y CLARAS DE PÁDEL Y FÚTBOL SINTÉTICO) */}
       <section id="servicios" className="bg-slate-100 py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-3 mb-12 text-center sm:text-left">
@@ -312,12 +312,12 @@ export default function App() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             
-            {/* TARJETA PÁDEL (FOTO REAL DE PÁDEL) */}
+            {/* TARJETA PÁDEL REAL */}
             <div className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
               <div className="relative h-72 overflow-hidden bg-slate-950 flex items-center justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1622279457486-62dcc4a431d6?auto=format&fit=crop&q=80&w=1000" 
-                  alt="Cancha de Pádel Pro" 
+                  src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?auto=format&fit=crop&q=80&w=1000" 
+                  alt="Cancha de Pádel Pro Vidriada" 
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
                 />
                 <div className="absolute top-4 left-4 bg-emerald-500 text-slate-950 font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md z-10">
@@ -340,13 +340,13 @@ export default function App() {
               </div>
             </div>
 
-            {/* TARJETA FÚTBOL 7 (FOTO CLARA DE CÉSPED SINTÉTICO) */}
+            {/* TARJETA FÚTBOL 7 SINTÉTICO REAL */}
             <div className="bg-white border border-slate-200/80 rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition duration-300 flex flex-col">
-              <div className="relative h-72 overflow-hidden bg-slate-950 flex items-center justify-center">
+              <div className="relative h-72 overflow-hidden bg-emerald-950 flex items-center justify-center">
                 <img 
-                  src="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&q=80&w=1000" 
+                  src="https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&q=80&w=1000" 
                   alt="Cancha de Fútbol Césped Sintético" 
-                  className="w-full h-full object-cover transform hover:scale-105 transition duration-500"
+                  className="w-full h-full object-cover transform hover:scale-105 transition duration-500 brightness-90"
                 />
                 <div className="absolute top-4 left-4 bg-blue-600 text-white font-black text-xs uppercase px-3 py-1.5 rounded-full shadow-md z-10">
                   Fútbol 7 & Otros
