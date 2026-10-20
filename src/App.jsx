@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { CheckCircle2, ArrowRight, Sparkles, Calendar, Clock, MapPin, Phone, Instagram, Trophy, Zap, Coffee, Shield } from 'lucide-react';
+import { ArrowRight, Trophy, Shield, Coffee } from 'lucide-react';
+import logoImg from './logo.png';
 
 export default function App() {
   const [selectedSport, setSelectedSport] = useState('padel');
@@ -29,8 +30,9 @@ export default function App() {
       <header className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-12 py-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="bg-slate-900/80 backdrop-blur border border-white/10 px-3 py-1.5 rounded-xl text-white font-black text-lg tracking-wider flex items-center gap-1.5">
-              <span className="text-emerald-400">LC</span> LES COURTS
+            <div className="bg-slate-900/80 backdrop-blur border border-white/10 px-3 py-1.5 rounded-xl text-white font-black text-lg tracking-wider flex items-center gap-2">
+              <img src={logoImg} alt="Les Courts Logo" className="w-6 h-6 rounded object-cover" />
+              LES COURTS
             </div>
           </div>
 
@@ -51,23 +53,33 @@ export default function App() {
         </div>
       </header>
 
-      {/* HERO SECTION CON FONDO REAL Y CURVA */}
+      {/* HERO SECTION */}
       <section id="inicio" className="relative min-h-[92vh] flex items-center justify-center bg-slate-950 overflow-hidden pt-20">
-        {/* Imagen de fondo real con overlay oscuro */}
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-40 scale-105 animate-pulse duration-1000" />
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1529900748604-07564a03e7a6?auto=format&fit=crop&q=80&w=1920')] bg-cover bg-center opacity-40 scale-105" />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-black/70" />
 
-        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 py-20">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 text-center space-y-8 py-20 flex flex-col items-center">
+          
           <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-md border border-white/15 px-4 py-2 rounded-full text-xs font-bold text-emerald-400 tracking-wide uppercase">
             Fútbol 7 & Pádel Pro • Córdoba
           </div>
 
+          {/* TÍTULO PRINCIPAL */}
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
             EL PARTIDAZO DE LA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">
               SEMANA SE JUGA EN LES COURTS
             </span>
           </h1>
+
+          {/* LOGO DEBAJO DEL TÍTULO */}
+          <div className="py-2">
+            <img 
+              src={logoImg} 
+              alt="Les Courts Logo Oficial" 
+              className="w-28 h-28 sm:w-36 sm:h-36 rounded-2xl shadow-2xl border-2 border-emerald-400/40 object-cover mx-auto transform hover:scale-105 transition duration-300" 
+            />
+          </div>
 
           <p className="text-base sm:text-lg text-slate-300 max-w-2xl mx-auto font-medium">
             Viví la mejor experiencia deportiva con canchas de primer nivel, iluminación LED profesional y el mejor tercer tiempo.
@@ -89,11 +101,10 @@ export default function App() {
           </div>
         </div>
 
-        {/* Curva decorativa inferior estilo tarjeta blanca */}
         <div className="absolute bottom-0 left-0 right-0 h-12 bg-white rounded-t-[40px] md:rounded-t-[60px]" />
       </section>
 
-      {/* SECCIÓN SERVICIOS ("MÁS QUE UNA CANCHA") CON FONDO BLANCO */}
+      {/* SECCIÓN SERVICIOS */}
       <section id="servicios" className="bg-white py-16 text-slate-900 relative z-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="space-y-3 mb-12">
@@ -106,7 +117,6 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Tarjeta 1 */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 hover:shadow-xl transition duration-300 flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
@@ -119,7 +129,6 @@ export default function App() {
               </div>
             </div>
 
-            {/* Tarjeta 2 */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 hover:shadow-xl transition duration-300 flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
@@ -130,14 +139,8 @@ export default function App() {
                   Disfrutá de bebidas ultra frías, picadas y buena música después de cada partido en nuestro sector exclusivo para equipos.
                 </p>
               </div>
-              <div className="pt-6">
-                <span className="text-emerald-600 font-bold text-sm flex items-center gap-1 cursor-pointer hover:underline">
-                  Ver cantina <ArrowRight className="w-4 h-4" />
-                </span>
-              </div>
             </div>
 
-            {/* Tarjeta 3 */}
             <div className="bg-slate-50 border border-slate-200/80 rounded-3xl p-8 hover:shadow-xl transition duration-300 flex flex-col justify-between">
               <div className="space-y-4">
                 <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center">
@@ -153,7 +156,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* MOTOR DE RESERVAS INTERACTIVO */}
+      {/* MOTOR DE RESERVAS */}
       <section id="reservas" className="bg-slate-900 py-24 text-white relative">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-4 mb-12">
@@ -167,7 +170,6 @@ export default function App() {
           <div className="bg-slate-950 border border-slate-800 rounded-3xl p-6 sm:p-10 shadow-2xl">
             {!bookingConfirmed ? (
               <div className="space-y-8">
-                {/* 1. Deporte */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">1. Seleccioná la Disciplina</label>
                   <div className="grid grid-cols-2 gap-4">
@@ -196,7 +198,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 2. Fecha */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">2. Seleccioná la Fecha</label>
                   <input
@@ -207,7 +208,6 @@ export default function App() {
                   />
                 </div>
 
-                {/* 3. Horarios */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">3. Seleccioná el Horario</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -231,7 +231,6 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* Formulario */}
                 {selectedTime && (
                   <form onSubmit={handleBookingSubmit} className="pt-6 border-t border-slate-800 space-y-4">
                     <h3 className="text-lg font-black text-white">Completá tus datos para confirmar</h3>
@@ -289,7 +288,7 @@ export default function App() {
       <footer className="bg-slate-950 border-t border-slate-900 py-12 text-slate-400 text-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-2">
-            <div className="bg-emerald-400 p-1.5 rounded-lg text-slate-950 font-black text-sm">LC</div>
+            <img src={logoImg} alt="Les Courts Logo" className="w-6 h-6 rounded object-cover" />
             <span className="font-bold text-white text-base">LES COURTS</span>
           </div>
           <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.</p>
