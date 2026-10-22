@@ -11,9 +11,10 @@ export default function App() {
   const [selectedSport, setSelectedSport] = useState('padel'); 
   const [selectedDay, setSelectedDay] = useState(0);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedCourt, setSelectedCourt] = useState(null); // Cancha específica elegida
   const [isReturningUser, setIsReturningUser] = useState(false);
 
-  // Base de datos de turnos ocupados
+  // Base de datos de turnos ocupados por cancha específica
   const [bookedSlots, setBookedSlots] = useState(() => {
     const saved = localStorage.getItem('lescourts_booked_slots');
     return saved ? JSON.parse(saved) : {};
@@ -42,10 +43,17 @@ export default function App() {
   const handleSedeChange = (sedeId) => {
     setSelectedSede(sedeId);
     setSelectedTime(null);
+    setSelectedCourt(null);
     const validSports = getSportsForSede(sedeId);
     if (!validSports.some(s => s.id === selectedSport)) {
       setSelectedSport(validSports[0].id);
     }
+  };
+
+  const handleSportChange = (sportId) => {
+    setSelectedSport(sportId);
+    setSelectedTime(null);
+    setSelectedCourt(null);
   };
 
   const getNextDays = () => {
@@ -65,7 +73,20 @@ export default function App() {
 
   const availableDays = getNextDays();
 
-  // Generar horarios y precios según Sede y Deporte
+  // Obtener cantidad de canchas según sede y deporte
+  const getCourtsCount = (sede, sport) => {
+    if (sede === 'rivera') {
+      if (sport === 'futbol') return 3; // 3 canchas de fútbol 7
+      if (sport === 'padel') return 4;  // 4 canchas de pádel
+    }
+    if (sede === 'belgrano') {
+      if (sport === 'padel') return 4;  // 4 canchas de pádel
+      return 2; // Tenis o Squash
+    }
+    return 2;
+  };
+
+  // Horarios base según Sede y Deporte
   const getHoursForSelection = (sede, sport) => {
     if (sede === 'rivera' && sport === 'futbol') {
       return [
@@ -78,28 +99,16 @@ export default function App() {
         { time: '22:00', price: '$105.000 (Efe $98k)', tag: 'Promo Estelar' },
         { time: '23:00', price: '$95.000', tag: 'Nocturno' },
       ];
-    } else if (sede === 'rivera' && sport === 'padel') {
-      return [
-        { time: '10:00', price: '$24.000', tag: 'Sin Luz' },
-        { time: '12:00', price: '$24.000', tag: 'Sin Luz' },
-        { time: '15:00', price: '$24.000', tag: 'Sin Luz' },
-        { time: '18:00', price: '$28.000', tag: 'Con Luz' },
-        { time: '19:30', price: '$28.000', tag: 'Con Luz' },
-        { time: '21:00', price: '$28.000', tag: 'Con Luz' },
-        { time: '22:30', price: '$28.000', tag: 'Con Luz' },
-      ];
-    } else {
-      if (sport === 'tenis') {
+    } else if (sport === 'padel') {
+      if (sede === 'rivera') {
         return [
-          { time: '17:00', price: '$15.000', tag: 'Popular' },
-          { time: '18:30', price: '$18.000', tag: 'Libre' },
-          { time: '20:00', price: '$20.000', tag: '¡Estelar!' },
-        ];
-      } else if (sport === 'squash') {
-        return [
-          { time: '17:30', price: '$12.000', tag: 'Popular' },
-          { time: '19:00', price: '$14.000', tag: 'Libre' },
-          { time: '20:30', price: '$16.000', tag: '¡Estelar!' },
+          { time: '10:00', price: '$24.000', tag: 'Sin Luz' },
+          { time: '12:00', price: '$24.000', tag: 'Sin Luz' },
+          { time: '15:00', price: '$24.000', tag: 'Sin Luz' },
+          { time: '18:00', price: '$28.000', tag: 'Con Luz' },
+          { time: '19:30', price: '$28.000', tag: 'Con Luz' },
+          { time: '21:00', price: '$28.000', tag: 'Con Luz' },
+          { time: '22:30', price: '$28.000', tag: 'Con Luz' },
         ];
       } else {
         return [
@@ -110,19 +119,39 @@ export default function App() {
           { time: '23:00', price: '$19.000', tag: 'Promo' },
         ];
       }
+    } else if (sport === 'tenis') {
+      return [
+        { time: '17:00', price: '$15.000', tag: 'Popular' },
+        { time: '18:30', price: '$18.000', tag: 'Libre' },
+        { time: '20:00', price: '$20.000', tag: '¡Estelar!' },
+      ];
+    } else {
+      return [
+        { time: '17:30', price: '$12.000', tag: 'Popular' },
+        { time: '19:00', price: '$14.000', tag: 'Libre' },
+        { time: '20:30', price: '$16.000', tag: '¡Estelar!' },
+      ];
     }
   };
 
   const baseHours = getHoursForSelection(selectedSede, selectedSport);
   const currentFullDate = availableDays[selectedDay].fullDate;
-  
+  const totalCourts = getCourtsCount(selectedSede, selectedSport);
+
+  // Verificamos el estado de las canchas para cada horario
   const hours = baseHours.map(h => {
-    const slotKey = `${selectedSede}_${selectedSport}_${currentFullDate}_${h.time}`;
-    const isBooked = bookedSlots[slotKey] || false;
+    let availableCourtsList = [];
+    for (let c = 1; c <= totalCourts; c++) {
+      const slotKey = `${selectedSede}_${selectedSport}_${currentFullDate}_${h.time}_cancha${c}`;
+      if (!bookedSlots[slotKey]) {
+        availableCourtsList.push(c);
+      }
+    }
     return {
       ...h,
-      available: !isBooked,
-      tag: isBooked ? 'Ocupado' : h.tag
+      availableCount: availableCourtsList.length,
+      available: availableCourtsList.length > 0,
+      availableCourtsList
     };
   });
 
@@ -153,9 +182,9 @@ export default function App() {
   };
 
   const handleFinalBooking = () => {
-    if (!selectedTime) return;
+    if (!selectedTime || !selectedCourt) return;
 
-    const slotKey = `${selectedSede}_${selectedSport}_${currentFullDate}_${selectedTime}`;
+    const slotKey = `${selectedSede}_${selectedSport}_${currentFullDate}_${selectedTime}_cancha${selectedCourt}`;
     setBookedSlots(prev => ({ ...prev, [slotKey]: true }));
 
     const dateLabel = availableDays[selectedDay].dateNum;
@@ -164,7 +193,7 @@ export default function App() {
     
     const whatsappNumber = selectedSede === 'belgrano' ? '5493512353680' : '5493513988422';
 
-    const message = `¡Hola Les Courts! 🎾⚽ Vengo a confirmar mi reserva.\n\n📍 *Sede:* ${sedeName}\n👤 *Cliente:* ${name}\n📱 *Teléfono:* ${phone}\n🏆 *Deporte:* ${sportName}\n📅 *Día:* ${dateLabel}\n⏰ *Horario:* ${selectedTime} hs\n\nQuedo atento para coordinar el envío de la seña y asegurar mi turno. ¡Gracias!`;
+    const message = `¡Hola Les Courts! 🎾⚽ Vengo a confirmar mi reserva.\n\n📍 *Sede:* ${sedeName}\n👤 *Cliente:* ${name}\n📱 *Teléfono:* ${phone}\n🏆 *Deporte:* ${sportName} (Cancha ${selectedCourt})\n📅 *Día:* ${dateLabel}\n⏰ *Horario:* ${selectedTime} hs\n\nQuedo atento para coordinar el envío de la seña y asegurar mi turno. ¡Gracias!`;
     const encodedMessage = encodeURIComponent(message);
     
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodedMessage}`;
@@ -178,6 +207,7 @@ export default function App() {
     setPhone('');
     setName('');
     setSelectedTime(null);
+    setSelectedCourt(null);
     setIsReturningUser(false);
   };
 
@@ -188,12 +218,12 @@ export default function App() {
       <header className="absolute top-0 left-0 right-0 z-50 px-4 sm:px-12 py-6">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="bg-white/90 backdrop-blur border border-slate-200 px-4 py-2 rounded-xl text-slate-900 font-black text-lg tracking-wider flex items-center gap-2 shadow-sm">
+            <div className="bg-white/95 backdrop-blur border border-slate-200 px-4 py-2 rounded-xl text-slate-900 font-black text-lg tracking-wider flex items-center gap-2 shadow-sm">
               <span className="text-[#6ea324]">LC</span> LES COURTS
             </div>
           </div>
 
-          <nav className="hidden md:flex items-center space-x-2 bg-white/80 backdrop-blur-md px-4 py-1.5 rounded-full border border-slate-200 text-sm font-bold text-slate-700 shadow-sm">
+          <nav className="hidden md:flex items-center space-x-2 bg-white/9ောက်ပ backdrop-blur-md px-4 py-1.5 rounded-full border border-slate-200 text-sm font-bold text-slate-700 shadow-sm">
             <a href="#inicio" className="px-4 py-1.5 rounded-full hover:bg-slate-100 transition">Inicio</a>
             <a href="#sedes" className="px-4 py-1.5 rounded-full hover:bg-slate-100 transition">Sedes</a>
             <a href="#servicios" className="px-4 py-1.5 rounded-full hover:bg-slate-100 transition">Canchas</a>
@@ -223,9 +253,9 @@ export default function App() {
           </div>
 
           <h1 className="text-4xl sm:text-7xl font-black text-white tracking-tight leading-[1.1]">
-            EL FULBITO DE LA SEMANA SE JUEGA EN <br />
+            EL PARTIDAZO DE LA <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#9bc947] to-[#c7f56e]">
-               LES COURTS
+              SEMANA SE JUEGA EN LES COURTS
             </span>
           </h1>
 
@@ -337,7 +367,7 @@ export default function App() {
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500 opacity-90"
                 />
                 <div className="absolute top-4 left-4 bg-[#8cc63f] text-slate-950 font-black text-xs uppercase px-3.5 py-1.5 rounded-full shadow-md z-10">
-                  Pádel 
+                  Pádel Pro (4 Canchas)
                 </div>
               </div>
               <div className="p-8 flex flex-col justify-between flex-grow space-y-4">
@@ -365,7 +395,7 @@ export default function App() {
                   className="w-full h-full object-cover transform hover:scale-105 transition duration-500 opacity-90"
                 />
                 <div className="absolute top-4 left-4 bg-[#7ab332] text-white font-black text-xs uppercase px-3.5 py-1.5 rounded-full shadow-md z-10">
-                  Fútbol 7 & Otros
+                  Fútbol 7 (3 Canchas)
                 </div>
               </div>
               <div className="p-8 flex flex-col justify-between flex-grow space-y-4">
@@ -471,7 +501,7 @@ export default function App() {
               </form>
             )}
 
-            {/* PASO 3: SEDE, DISCIPLINA, CALENDARIO Y HORARIOS */}
+            {/* PASO 3: SEDE, DISCIPLINA, CALENDARIO, HORARIOS Y CANCHAS */}
             {step === 'booking' && (
               <div className="space-y-8 animate-fade-in">
                 <div className="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -521,7 +551,7 @@ export default function App() {
                   </div>
                 </div>
 
-                {/* 2. SELECCIÓN DE DISCIPLINA (Filtrada por Sede) */}
+                {/* 2. SELECCIÓN DE DISCIPLINA */}
                 <div className="space-y-2">
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">2. Seleccioná el Deporte</label>
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -529,7 +559,7 @@ export default function App() {
                       <button
                         key={sport.id}
                         type="button"
-                        onClick={() => { setSelectedSport(sport.id); setSelectedTime(null); }}
+                        onClick={() => handleSportChange(sport.id)}
                         className={`py-3.5 px-3 rounded-2xl font-black text-xs sm:text-sm border transition flex items-center justify-center gap-2 cursor-pointer ${
                           selectedSport === sport.id
                             ? 'bg-[#8cc63f] text-slate-950 border-[#8cc63f] shadow-lg shadow-[#8cc63f]/20'
@@ -552,7 +582,7 @@ export default function App() {
                       <button
                         key={day.index}
                         type="button"
-                        onClick={() => { setSelectedDay(day.index); setSelectedTime(null); }}
+                        onClick={() => { setSelectedDay(day.index); setSelectedTime(null); setSelectedCourt(null); }}
                         className={`p-3 rounded-2xl border text-center transition flex flex-col items-center justify-center cursor-pointer ${
                           selectedDay === day.index
                             ? 'bg-[#8cc63f] text-slate-950 border-[#8cc63f] font-black shadow-lg shadow-[#8cc63f]/20 scale-105'
@@ -569,17 +599,17 @@ export default function App() {
                 {/* 4. SELECCIÓN DE HORARIO */}
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-3 flex items-center gap-2">
-                    <Clock className="w-4 h-4 text-[#8cc63f]" /> 4. Horarios y Tarifas
+                    <Clock className="w-4 h-4 text-[#8cc63f]" /> 4. Seleccioná el Horario
                   </label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {hours.map((h, idx) => (
                       <button
                         key={idx}
                         disabled={!h.available}
-                        onClick={() => setSelectedTime(h.time)}
+                        onClick={() => { setSelectedTime(h.time); setSelectedCourt(null); }}
                         className={`p-3.5 rounded-2xl border text-left transition flex items-center justify-between relative overflow-hidden ${
                           !h.available
-                            ? 'bg-slate-900/60 border-slate-900 text-slate-600 cursor-not-allowed opacity-50'
+                            ? 'bg-slate-950/60 border-slate-900 text-slate-600 cursor-not-allowed opacity-40'
                             : selectedTime === h.time
                             ? 'bg-[#8cc63f] text-slate-950 border-[#8cc63f] font-black shadow-lg shadow-[#8cc63f]/25 scale-[1.01]'
                             : 'bg-slate-900 border-slate-800 text-slate-200 hover:border-[#8cc63f]/50 cursor-pointer'
@@ -587,15 +617,50 @@ export default function App() {
                       >
                         <div className="flex items-center gap-3">
                           <span className="text-lg font-black">{h.time}</span>
-                          <span className="text-xs opacity-90 font-bold">{h.available ? h.price : 'Ocupado'}</span>
+                          <span className="text-xs opacity-90 font-bold">{h.available ? h.price : 'Todo Ocupado'}</span>
                         </div>
                         <span className={`text-[9px] font-extrabold uppercase px-2 py-1 rounded ${h.available ? 'bg-[#8cc63f]/20 text-[#b4ea57]' : 'bg-red-500/20 text-red-400'}`}>
-                          {h.tag}
+                          {h.available ? `${h.availableCount} disp.` : 'Ocupado'}
                         </span>
                       </button>
                     ))}
                   </div>
                 </div>
+
+                {/* 5. SELECCIÓN DE CANCHA ESPECÍFICA (Aparece al elegir hora) */}
+                {selectedTime && (
+                  <div className="pt-2 animate-fade-in space-y-3">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                      <Zap className="w-4 h-4 text-[#8cc63f]" /> 5. Elegí la Cancha Disponible ({selectedTime} hs)
+                    </label>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      {Array.from({ length: totalCourts }, (_, i) => i + 1).map((courtNum) => {
+                        const slotKey = `${selectedSede}_${selectedSport}_${currentFullDate}_${selectedTime}_cancha${courtNum}`;
+                        const isBooked = bookedSlots[slotKey];
+
+                        return (
+                          <button
+                            key={courtNum}
+                            disabled={isBooked}
+                            onClick={() => setSelectedCourt(courtNum)}
+                            className={`p-4 rounded-2xl border text-center transition flex flex-col items-center justify-center gap-1 ${
+                              isBooked
+                                ? 'bg-slate-950/50 border-slate-900 text-slate-600 cursor-not-allowed line-through opacity-50'
+                                : selectedCourt === courtNum
+                                ? 'bg-[#8cc63f] text-slate-950 border-[#8cc63f] font-black shadow-lg shadow-[#8cc63f]/30 scale-105'
+                                : 'bg-slate-900 text-slate-200 border-slate-800 hover:border-[#8cc63f] cursor-pointer'
+                            }`}
+                          >
+                            <span className="text-sm font-black">Cancha {courtNum}</span>
+                            <span className="text-[10px] font-bold opacity-80">
+                              {isBooked ? 'Ocupada' : 'Disponible'}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 {/* AVISO DE SEÑA */}
                 <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-4 flex items-start gap-3 text-amber-300 text-xs leading-relaxed">
@@ -607,14 +672,14 @@ export default function App() {
                 </div>
 
                 {/* BOTÓN FINAL */}
-                {selectedTime && (
+                {selectedTime && selectedCourt && (
                   <div className="pt-2 animate-fade-in">
                     <button
                       type="button"
                       onClick={handleFinalBooking}
                       className="w-full bg-[#8cc63f] hover:bg-[#7ab332] text-slate-950 py-4 rounded-2xl font-black text-base transition shadow-xl shadow-[#8cc63f]/20 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <MessageSquare className="w-5 h-5" /> Enviar WhatsApp a Les Courts ({selectedTime} hs) 🚀
+                      <MessageSquare className="w-5 h-5" /> Enviar WhatsApp (Cancha {selectedCourt} - {selectedTime} hs) 🚀
                     </button>
                   </div>
                 )}
@@ -630,7 +695,7 @@ export default function App() {
                 <div className="space-y-2">
                   <h3 className="text-2xl font-black text-white">¡Turno Reservado con Éxito!</h3>
                   <p className="text-slate-300 text-sm max-w-md mx-auto">
-                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp para enviar la confirmación a la sede <span className="text-white font-bold">{selectedSede === 'belgrano' ? 'Villa Belgrano' : 'Rivera Indarte'}</span> para tu cancha de <span className="text-[#b4ea57] uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-[#b4ea57] font-bold">{selectedTime} hs</span>. ¡Recordá coordinar la seña para asegurar tu lugar!
+                    Excelente <span className="text-white font-bold">{name}</span>. Se abrió WhatsApp para enviar la confirmación a la sede <span className="text-white font-bold">{selectedSede === 'belgrano' ? 'Villa Belgrano' : 'Rivera Indarte'}</span> para tu <span className="text-[#b4ea57] font-bold">Cancha {selectedCourt}</span> de <span className="text-[#b4ea57] uppercase font-bold">{selectedSport}</span> el día <span className="text-white font-bold">{availableDays[selectedDay].dateNum}</span> a las <span className="text-[#b4ea57] font-bold">{selectedTime} hs</span>. ¡Recordá coordinar la seña para asegurar tu lugar!
                   </p>
                 </div>
                 <button
@@ -654,9 +719,7 @@ export default function App() {
             <div className="bg-[#8cc63f] p-1.5 rounded-lg text-slate-950 font-black text-xs">LC</div>
             <span className="font-bold text-white text-base">LES COURTS</span>
           </div>
-          <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.
-            Desarollado por Mateo Diaz
-          </p>
+          <p>© {new Date().getFullYear()} Les Courts Complejo Deportivo. Todos los derechos reservados.</p>
           <div className="flex items-center space-x-4">
             <a 
               href="https://www.instagram.com/lescourts" 
